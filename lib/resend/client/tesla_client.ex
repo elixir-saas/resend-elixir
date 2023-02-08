@@ -1,11 +1,10 @@
 defmodule Resend.Client.TeslaClient do
   @behaviour Resend.Client
 
-  @spec post(String.t(), map()) ::
+  @spec post(Resend.config(), String.t(), map()) ::
           {:ok, %{body: map(), status: pos_integer()}} | {:error, any()}
-  def post(path, body) do
-    client = new(Resend.config())
-    Tesla.post(client, path, body)
+  def post(config, path, body) do
+    Tesla.post(new(config), path, body)
   end
 
   @spec new(Resend.config()) :: Tesla.Client.t()

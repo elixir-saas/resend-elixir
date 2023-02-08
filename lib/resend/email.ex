@@ -19,8 +19,9 @@ defmodule Resend.Email do
   end
 
   @spec send(map()) :: Resend.Client.response(t())
-  def send(opts) do
-    Resend.Client.post("/email", __MODULE__, %{
+  @spec send(Resend.confg(), map()) :: Resend.Client.response(t())
+  def send(config \\ Resend.config(), opts) do
+    Resend.Client.post(config, "/email", __MODULE__, %{
       subject: opts[:subject],
       to: opts[:to],
       from: opts[:from],
