@@ -8,7 +8,20 @@ defmodule Resend.MixProject do
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
+      description: description(),
+      package: package(),
       deps: deps()
+    ]
+  end
+
+  defp description() do
+    "API client for Resend, the new email API for developers."
+  end
+
+  defp package() do
+    [
+      licenses: ["Apache-2.0"],
+      links: %{}
     ]
   end
 
