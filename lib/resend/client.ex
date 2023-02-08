@@ -27,14 +27,10 @@ defmodule Resend.Client do
   ]
 
   @doc """
-  Returns a new Resend client struct.
-
-  Accepts a keyword list of config opts, though if omitted then it will attempt to load
-  them from the application environment.
+  Creates a new Resend client struct given a keyword list of config opts.
   """
-  @spec new() :: t()
   @spec new(Resend.config()) :: t()
-  def new(config \\ Resend.config()) do
+  def new(config) do
     struct!(__MODULE__, Keyword.merge(@default_opts, config))
   end
 

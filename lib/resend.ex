@@ -13,6 +13,18 @@ defmodule Resend do
           )
 
   @doc """
+  Returns a Resend client.
+
+  Accepts a keyword list of config opts, though if omitted then it will attempt to load
+  them from the application environment.
+  """
+  @spec client() :: Resend.Client.t()
+  @spec client(config()) :: Resend.Client.t()
+  def client(config \\ config()) do
+    Resend.Client.new(config)
+  end
+
+  @doc """
   Loads config values from the application environment.
 
   Config options are as follows:

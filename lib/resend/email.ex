@@ -40,7 +40,7 @@ defmodule Resend.Email do
   """
   @spec send(map()) :: Resend.Client.response(t())
   @spec send(Resend.Client.t(), map()) :: Resend.Client.response(t())
-  def send(client \\ Resend.Client.new(), opts) do
+  def send(client \\ Resend.client(), opts) do
     Resend.Client.post(client, "/email", __MODULE__, %{
       subject: opts[:subject],
       to: opts[:to],
