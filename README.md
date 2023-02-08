@@ -28,6 +28,19 @@ def deps do
 end
 ```
 
+## Swoosh Adapter
+
+This library includes a Swoosh adapter to make using Resend with a new Phoenix project as easy as
+possible. All you have to do is configure your Mailer:
+
+```ex
+config :my_app, MyApp.Mailer,
+  adapter: Resend.Swoosh.Adapter,
+  api_key: "re_1234567"
+```
+
+View additional documentation at <https://hexdocs.pm/resend/Resend.Swoosh.Adapter.html>.
+
 ## Testing
 
 By default, calls to Resend are mocked in tests. To send live emails while running
