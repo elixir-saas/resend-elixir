@@ -1,10 +1,12 @@
 defmodule Resend.MixProject do
   use Mix.Project
 
+  @version "0.1.0"
+
   def project do
     [
       app: :resend,
-      version: "0.1.0",
+      version: @version,
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -40,8 +42,9 @@ defmodule Resend.MixProject do
   defp deps do
     [
       {:swoosh, "~> 1.3"},
+      {:tesla, "~> 1.5"},
       {:hackney, "~> 1.9", only: [:dev, :test]},
-      {:tesla, "~> 1.5"}
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
   end
 end
