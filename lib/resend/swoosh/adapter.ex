@@ -34,7 +34,7 @@ defmodule Resend.Swoosh.Adapter do
 
   @impl true
   def deliver(%Swoosh.Email{} = email, config) do
-    Resend.Email.send(config, %{
+    Resend.Email.send(Resend.Client.new(config), %{
       subject: email.subject,
       from: format_sender(email.from),
       to: format_recipients(email.to),

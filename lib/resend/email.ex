@@ -39,9 +39,9 @@ defmodule Resend.Email do
   You are required to include one or both of the `:html` and `:text` options.
   """
   @spec send(map()) :: Resend.Client.response(t())
-  @spec send(Resend.confg(), map()) :: Resend.Client.response(t())
-  def send(config \\ Resend.config(), opts) do
-    Resend.Client.post(config, "/email", __MODULE__, %{
+  @spec send(Resend.Client.t(), map()) :: Resend.Client.response(t())
+  def send(client \\ Resend.Client.new(), opts) do
+    Resend.Client.post(client, "/email", __MODULE__, %{
       subject: opts[:subject],
       to: opts[:to],
       from: opts[:from],

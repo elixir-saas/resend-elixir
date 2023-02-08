@@ -44,6 +44,7 @@ defmodule Resend.MixProject do
       {:swoosh, "~> 1.3"},
       {:tesla, "~> 1.5"},
       {:hackney, "~> 1.9", only: [:dev, :test]},
+      {:dialyxir, "~> 1.2", only: :dev, runtime: false},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
   end
