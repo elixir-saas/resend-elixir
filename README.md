@@ -23,7 +23,7 @@ Install by adding `resend` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:resend, "~> 0.2.0"}
+    {:resend, "~> 0.2.1"}
   ]
 end
 ```
