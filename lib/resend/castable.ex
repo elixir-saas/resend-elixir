@@ -1,4 +1,6 @@
 defmodule Resend.Castable do
+  @moduledoc false
+
   @type generic_map :: %{String.t() => any()}
 
   @callback cast(generic_map() | nil) :: struct() | nil

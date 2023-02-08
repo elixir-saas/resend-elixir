@@ -1,4 +1,6 @@
 defmodule Resend.Client do
+  @moduledoc false
+
   require Logger
 
   alias Resend.Castable

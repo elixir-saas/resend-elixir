@@ -1,5 +1,6 @@
 defmodule Resend.Error do
   @moduledoc """
+  Castable module for returning structured errors from the Resend API.
   """
 
   @behaviour Resend.Castable
