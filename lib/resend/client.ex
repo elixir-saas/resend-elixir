@@ -31,6 +31,7 @@ defmodule Resend.Client do
   """
   @spec new(Resend.config()) :: t()
   def new(config) do
+    config = Keyword.take(config, [:api_key, :base_url, :client])
     struct!(__MODULE__, Keyword.merge(@default_opts, config))
   end
 
