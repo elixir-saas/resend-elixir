@@ -43,8 +43,13 @@ defmodule Resend.Client do
       {:ok, %{body: body, status: status}} when status in 200..299 ->
         {:ok, Castable.cast(castable_module, body)}
 
-      {:ok, %{body: body}} ->
+      {:ok, %{body: body}} when is_map(body) ->
+        Logger.error("#{inspect(__MODULE__)} error when calling #{path}: #{inspect(body)}")
         {:error, Castable.cast(Resend.Error, body)}
+
+      {:ok, %{body: body}} when is_binary(body) ->
+        Logger.error("#{inspect(__MODULE__)} error when calling #{path}: #{body}")
+        {:error, body}
 
       {:error, reason} ->
         Logger.error("#{inspect(__MODULE__)} error when calling #{path}: #{inspect(reason)}")
