@@ -14,6 +14,26 @@ config :resend, Resend.Client, api_key: "re_1234567"
 Resend.Email.send(%{to: "me@example.com", from: "myapp@example.com", subject: "Hello!", text: "👋🏻"})
 ```
 
+Elixir script example:
+
+```ex
+# Save this file as `resend.exs`, run it with `elixir resend.exs`
+Mix.install([
+  {:resend, "~> 0.2.0"}
+])
+
+# Replace with your API key
+client = Resend.client(api_key: "re_1234567")
+
+# Replace `:to` and `:from` with valid emails
+Resend.Email.send(client, %{
+  to: "me@example.com",
+  from: "myapp@example.com",
+  subject: "Hello!",
+  text: "👋🏻"
+})
+```
+
 View additional documentation at <https://hexdocs.pm/resend>.
 
 ## Installation
