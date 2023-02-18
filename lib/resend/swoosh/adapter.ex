@@ -40,7 +40,7 @@ defmodule Resend.Swoosh.Adapter do
       to: format_recipients(email.to),
       bcc: format_recipients(email.bcc),
       cc: format_recipients(email.cc),
-      reply_to: email.reply_to,
+      reply_to: format_recipients(email.reply_to),
       html: email.html_body,
       text: email.text_body
     })
@@ -65,10 +65,12 @@ defmodule Resend.Swoosh.Adapter do
     :ok
   end
 
+  defp format_sender(nil), do: nil
   defp format_sender(from) when is_binary(from), do: from
   defp format_sender({"", from}), do: from
   defp format_sender({from_name, from}), do: "#{from_name} <#{from}>"
 
+  defp format_recipients(nil), do: nil
   defp format_recipients(to) when is_binary(to), do: to
   defp format_recipients({_ignore, to}), do: to
   defp format_recipients(xs) when is_list(xs), do: Enum.map(xs, &format_recipients/1)
