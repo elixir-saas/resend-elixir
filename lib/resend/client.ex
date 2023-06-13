@@ -7,7 +7,7 @@ defmodule Resend.Client do
 
   alias Resend.Castable
 
-  @callback post(t(), String.t(), map()) ::
+  @callback request(t(), Keyword.t()) ::
               {:ok, %{body: map(), status: pos_integer()}} | {:error, any()}
 
   @type response(type) :: {:ok, type} | {:error, Resend.Error.t() | :client_error}
@@ -35,11 +35,35 @@ defmodule Resend.Client do
     struct!(__MODULE__, Keyword.merge(@default_opts, config))
   end
 
-  @spec post(t(), String.t(), atom(), map()) :: response(any())
-  def post(client, path, castable_module, body) do
+  @spec get(t(), atom(), String.t(), Keyword.t()) :: response(any())
+  def get(client, castable_module, path, opts) do
     client_module = client.client || Resend.Client.TeslaClient
 
-    case client_module.post(client, path, body) do
+    opts =
+      opts
+      |> Keyword.put(:method, :get)
+      |> Keyword.put(:url, path)
+
+    client_module.request(client, opts)
+    |> handle_response(path, castable_module)
+  end
+
+  @spec post(t(), atom(), String.t(), map(), Keyword.t()) :: response(any())
+  def post(client, castable_module, path, body, opts) do
+    client_module = client.client || Resend.Client.TeslaClient
+
+    opts =
+      opts
+      |> Keyword.put(:method, :post)
+      |> Keyword.put(:url, path)
+      |> Keyword.put(:body, body)
+
+    client_module.request(client, opts)
+    |> handle_response(path, castable_module)
+  end
+
+  defp handle_response(response, path, castable_module) do
+    case response do
       {:ok, %{body: body, status: status}} when status in 200..299 ->
         {:ok, Castable.cast(castable_module, body)}
 

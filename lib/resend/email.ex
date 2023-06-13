@@ -6,17 +6,56 @@ defmodule Resend.Email do
   @behaviour Resend.Castable
 
   @type t() :: %__MODULE__{
-          id: String.t()
+          id: String.t(),
+          from: String.t() | nil,
+          to: list(String.t()) | nil,
+          bcc: list(String.t()) | nil,
+          cc: list(String.t()) | nil,
+          reply_to: String.t() | nil,
+          subject: String.t() | nil,
+          text: String.t() | nil,
+          html: String.t() | nil,
+          last_event: String.t() | nil,
+          created_at: DateTime.t() | nil
         }
 
   @enforce_keys [:id]
-  defstruct [:id]
+  defstruct [
+    :id,
+    :from,
+    :to,
+    :bcc,
+    :cc,
+    :reply_to,
+    :subject,
+    :text,
+    :html,
+    :last_event,
+    :created_at
+  ]
 
   @impl true
   def cast(map) do
     %__MODULE__{
-      id: map["id"]
+      id: map["id"],
+      from: map["from"],
+      to: map["to"],
+      bcc: map["bcc"],
+      cc: map["cc"],
+      reply_to: map["reply_to"],
+      subject: map["subject"],
+      text: map["text"],
+      html: map["html"],
+      last_event: map["last_event"],
+      created_at: parse_iso8601(map["created_at"])
     }
+  end
+
+  defp parse_iso8601(nil), do: nil
+
+  defp parse_iso8601(date_string) do
+    {:ok, date_time, 0} = DateTime.from_iso8601(date_string)
+    date_time
   end
 
   @doc """
@@ -37,8 +76,9 @@ defmodule Resend.Email do
   """
   @spec send(map()) :: Resend.Client.response(t())
   @spec send(Resend.Client.t(), map()) :: Resend.Client.response(t())
+
   def send(client \\ Resend.client(), opts) do
-    Resend.Client.post(client, "/email", __MODULE__, %{
+    body = %{
       subject: opts[:subject],
       to: opts[:to],
       from: opts[:from],
@@ -47,6 +87,18 @@ defmodule Resend.Email do
       reply_to: opts[:reply_to],
       html: opts[:html],
       text: opts[:text]
-    })
+    }
+
+    Resend.Client.post(client, __MODULE__, "/emails", body, [])
+  end
+
+  @spec get(String.t()) :: Resend.Client.response(t())
+  @spec get(Resend.Client.t(), String.t()) :: Resend.Client.response(t())
+  def get(client \\ Resend.client(), email_id) do
+    Resend.Client.get(client, __MODULE__, "/emails/:id",
+      opts: [
+        path_params: [id: email_id]
+      ]
+    )
   end
 end

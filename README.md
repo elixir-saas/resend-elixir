@@ -72,5 +72,9 @@ By default, calls to Resend are mocked in tests. To send live emails while runni
 the test suite, set the following environment variables:
 
 ```sh
-RESEND_KEY="re_1234567" RECIPIENT_EMAIL="<to_email>" SENDER_EMAIL="<from_email>" mix test
+RESEND_KEY="re_1234567" \
+  RECIPIENT_EMAIL="<to_email>" \
+  SENDER_EMAIL="<from_email>" \
+  SENT_EMAIL_ID="<existing_email_id>" \
+  mix test
 ```

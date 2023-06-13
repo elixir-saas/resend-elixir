@@ -6,23 +6,23 @@ defmodule Resend.Error do
   @behaviour Resend.Castable
 
   @type t() :: %__MODULE__{
-          code: integer(),
-          type: String.t(),
-          message: String.t()
+          name: String.t(),
+          message: String.t(),
+          status_code: integer()
         }
 
   defstruct [
-    :code,
-    :type,
-    :message
+    :name,
+    :message,
+    :status_code
   ]
 
   @impl true
-  def cast(%{"error" => error}) do
+  def cast(error) when is_map(error) do
     %__MODULE__{
-      code: error["code"],
-      type: error["type"],
-      message: error["message"]
+      name: error["name"],
+      message: error["message"],
+      status_code: error["statusCode"]
     }
   end
 end
