@@ -6,19 +6,16 @@ defmodule Resend.Email do
   @behaviour Resend.Castable
 
   @type t() :: %__MODULE__{
-          id: String.t(),
-          from: String.t(),
-          to: String.t()
+          id: String.t()
         }
 
-  defstruct [:id, :from, :to]
+  @enforce_keys [:id]
+  defstruct [:id]
 
   @impl true
   def cast(map) do
     %__MODULE__{
-      id: map["id"],
-      from: map["from"],
-      to: map["to"]
+      id: map["id"]
     }
   end
 

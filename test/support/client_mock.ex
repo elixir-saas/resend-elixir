@@ -18,9 +18,7 @@ defmodule Resend.ClientMock do
       end
 
       success_body = %{
-        "from" => body["from"],
-        "id" => "f524bc41-316b-45c6-99f3-c5d3bc193d12",
-        "to" => body["to"]
+        "id" => "f524bc41-316b-45c6-99f3-c5d3bc193d12"
       }
 
       {status, body} = Keyword.get(opts, :respond_with, {200, success_body})
