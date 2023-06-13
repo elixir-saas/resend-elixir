@@ -24,7 +24,7 @@ Elixir script example:
 ```ex
 # Save this file as `resend.exs`, run it with `elixir resend.exs`
 Mix.install([
-  {:resend, "~> 0.2.0"}
+  {:resend, "~> 0.3.0"}
 ])
 
 # Replace with your API key
@@ -48,7 +48,7 @@ Install by adding `resend` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:resend, "~> 0.2.0"}
+    {:resend, "~> 0.3.0"}
   ]
 end
 ```
