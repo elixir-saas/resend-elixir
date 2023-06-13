@@ -5,5 +5,5 @@ if resend_key = System.get_env("RESEND_KEY") do
 else
   config :tesla, adapter: Tesla.Mock
 
-  config :resend, Resend.Client, api_key: "re_1234567"
+  config :resend, Resend.Client, api_key: "re_123456789"
 end

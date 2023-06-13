@@ -6,12 +6,17 @@ Send your first email in two steps:
 
 ```ex
 # Configure your Resend API key
-config :resend, Resend.Client, api_key: "re_1234567"
+config :resend, Resend.Client, api_key: "re_123456789"
 ```
 
 ```ex
 # Send an email
-Resend.Email.send(%{to: "me@example.com", from: "myapp@example.com", subject: "Hello!", text: "👋🏻"})
+Resend.Email.send(%{
+  to: "me@example.com",
+  from: "myapp@example.com",
+  subject: "Hello!",
+  text: "👋🏻"
+})
 ```
 
 Elixir script example:
@@ -23,7 +28,7 @@ Mix.install([
 ])
 
 # Replace with your API key
-client = Resend.client(api_key: "re_1234567")
+client = Resend.client(api_key: "re_123456789")
 
 # Replace `:to` and `:from` with valid emails
 Resend.Email.send(client, %{
@@ -56,7 +61,7 @@ possible. All you have to do is configure your Mailer:
 ```ex
 config :my_app, MyApp.Mailer,
   adapter: Resend.Swoosh.Adapter,
-  api_key: "re_1234567"
+  api_key: "re_123456789"
 ```
 
 View additional documentation at <https://hexdocs.pm/resend/Resend.Swoosh.Adapter.html>.
