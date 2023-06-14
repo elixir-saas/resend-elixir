@@ -4,6 +4,26 @@
 
 API client for [Resend](https://resend.com/), the new email API for developers.
 
+## API
+
+* [`Resend.Email`](https://hexdocs.pm/resend/Resend.Email.html)
+* 🚧 `Resend.Domain`
+* 🚧 `Resend.ApiKey`
+
+## Installation
+
+Install by adding `resend` to your list of dependencies in `mix.exs`:
+
+```elixir
+def deps do
+  [
+    {:resend, "~> 0.3.0"}
+  ]
+end
+```
+
+## Getting Started
+
 Send your first email in two steps:
 
 ```ex
@@ -42,18 +62,6 @@ Resend.Email.send(client, %{
 ```
 
 View additional documentation at <https://hexdocs.pm/resend>.
-
-## Installation
-
-Install by adding `resend` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:resend, "~> 0.3.0"}
-  ]
-end
-```
 
 ## Swoosh Adapter
 
