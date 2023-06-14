@@ -1,0 +1,40 @@
+# Resend + Elixir
+
+```elixir
+Mix.install([
+  {:resend, "~> 0.3.0"},
+  {:kino, "~> 0.9.4"}
+])
+```
+
+## Send an email
+
+```elixir
+to = Kino.Input.text("To") |> Kino.render()
+from = Kino.Input.text("From", default: "onboarding@resend.com") |> Kino.render()
+subject = Kino.Input.text("Subject", default: "Hello World") |> Kino.render()
+text = Kino.Input.textarea("Text", default: "It works!") |> Kino.render()
+
+Kino.nothing()
+```
+
+```elixir
+client = Resend.client(api_key: System.fetch_env!("LB_RESEND_KEY"))
+
+{:ok, email} =
+  Resend.Email.send(
+    client,
+    %{
+      to: Kino.Input.read(to),
+      from: Kino.Input.read(from),
+      subject: Kino.Input.read(subject),
+      text: Kino.Input.read(text)
+    }
+  )
+```
+
+```elixir
+Resend.Email.get(client, email.id)
+```
+
+<!-- livebook:{"offset":764,"stamp":{"token":"QTEyOEdDTQ.c80Ehzs75I_SFF-3Bex_Fkr9eJGYQonqYwZmHxq7XLJcl984qADo2blfNgI.sa6UDHU_fMjd_kHZ.djJSwaSoIWP0iEsH9cQTP_Jy3vr1Jr_fMSbyyduwAGKgOfvh_681-02TpeBWpg._B-Ic2f26-6y2nZcq4Kr8w","version":1}} -->

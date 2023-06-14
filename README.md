@@ -1,5 +1,7 @@
 # Resend
 
+[![Run in Livebook](https://livebook.dev/badge/v1/blue.svg)](https://livebook.dev/run?url=https%3A%2F%2Fraw.githubusercontent.com%2Felixir-saas%2Fresend-elixir%2Fmain%2Fresend_elixir.livemd)
+
 API client for [Resend](https://resend.com/), the new email API for developers.
 
 Send your first email in two steps:
