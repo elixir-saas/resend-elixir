@@ -83,6 +83,9 @@ defmodule Resend.Client do
 
   defp handle_response(response, path, castable_module) do
     case response do
+      {:ok, %{body: "", status: status}} when status in 200..299 ->
+        {:ok, Castable.cast(castable_module, %{})}
+
       {:ok, %{body: body, status: status}} when status in 200..299 ->
         {:ok, Castable.cast(castable_module, body)}
 
