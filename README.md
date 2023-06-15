@@ -7,8 +7,8 @@ API client for [Resend](https://resend.com/), the new email API for developers.
 ## API
 
 * [`Resend.Emails`](https://hexdocs.pm/resend/Resend.Emails.html)
-* 🚧 `Resend.Domains`
-* 🚧 `Resend.ApiKeys`
+* [`Resend.Domains`](https://hexdocs.pm/resend/Resend.Domains.html)
+* [`Resend.ApiKeys`](https://hexdocs.pm/resend/Resend.ApiKeys.html)
 
 ## Installation
 
