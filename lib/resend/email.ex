@@ -3,6 +3,8 @@ defmodule Resend.Email do
   Send emails via Resend.
   """
 
+  alias Resend.Util
+
   @behaviour Resend.Castable
 
   @type t() :: %__MODULE__{
@@ -47,15 +49,8 @@ defmodule Resend.Email do
       text: map["text"],
       html: map["html"],
       last_event: map["last_event"],
-      created_at: parse_iso8601(map["created_at"])
+      created_at: Util.parse_iso8601(map["created_at"])
     }
-  end
-
-  defp parse_iso8601(nil), do: nil
-
-  defp parse_iso8601(date_string) do
-    {:ok, date_time, 0} = DateTime.from_iso8601(date_string)
-    date_time
   end
 
   @doc """
@@ -76,7 +71,6 @@ defmodule Resend.Email do
   """
   @spec send(map()) :: Resend.Client.response(t())
   @spec send(Resend.Client.t(), map()) :: Resend.Client.response(t())
-
   def send(client \\ Resend.client(), opts) do
     body = %{
       subject: opts[:subject],
@@ -89,7 +83,7 @@ defmodule Resend.Email do
       text: opts[:text]
     }
 
-    Resend.Client.post(client, __MODULE__, "/emails", body, [])
+    Resend.Client.post(client, __MODULE__, "/emails", body)
   end
 
   @spec get(String.t()) :: Resend.Client.response(t())

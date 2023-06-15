@@ -35,8 +35,9 @@ defmodule Resend.Client do
     struct!(__MODULE__, Keyword.merge(@default_opts, config))
   end
 
-  @spec get(t(), atom(), String.t(), Keyword.t()) :: response(any())
-  def get(client, castable_module, path, opts) do
+  @spec get(t(), Castable.impl(), String.t()) :: response(any())
+  @spec get(t(), Castable.impl(), String.t(), Keyword.t()) :: response(any())
+  def get(client, castable_module, path, opts \\ []) do
     client_module = client.client || Resend.Client.TeslaClient
 
     opts =
@@ -48,13 +49,31 @@ defmodule Resend.Client do
     |> handle_response(path, castable_module)
   end
 
-  @spec post(t(), atom(), String.t(), map(), Keyword.t()) :: response(any())
-  def post(client, castable_module, path, body, opts) do
+  @spec post(t(), Castable.impl(), String.t()) :: response(any())
+  @spec post(t(), Castable.impl(), String.t(), map()) :: response(any())
+  @spec post(t(), Castable.impl(), String.t(), map(), Keyword.t()) :: response(any())
+  def post(client, castable_module, path, body \\ %{}, opts \\ []) do
     client_module = client.client || Resend.Client.TeslaClient
 
     opts =
       opts
       |> Keyword.put(:method, :post)
+      |> Keyword.put(:url, path)
+      |> Keyword.put(:body, body)
+
+    client_module.request(client, opts)
+    |> handle_response(path, castable_module)
+  end
+
+  @spec delete(t(), Castable.impl(), String.t()) :: response(any())
+  @spec delete(t(), Castable.impl(), String.t(), map()) :: response(any())
+  @spec delete(t(), Castable.impl(), String.t(), map(), Keyword.t()) :: response(any())
+  def delete(client, castable_module, path, body \\ %{}, opts \\ []) do
+    client_module = client.client || Resend.Client.TeslaClient
+
+    opts =
+      opts
+      |> Keyword.put(:method, :delete)
       |> Keyword.put(:url, path)
       |> Keyword.put(:body, body)
 

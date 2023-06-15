@@ -1,17 +1,22 @@
 defmodule Resend.Castable do
   @moduledoc false
 
+  @type impl :: module() | {module(), module()} | :raw
   @type generic_map :: %{String.t() => any()}
 
-  @callback cast(generic_map() | nil) :: struct() | nil
+  @callback cast(generic_map() | {module(), generic_map()} | nil) :: struct() | nil
 
-  @spec cast(module() | :raw, generic_map() | nil) :: struct() | generic_map() | nil
+  @spec cast(impl(), generic_map() | nil) :: struct() | generic_map() | nil
   def cast(_implementation, nil) do
     nil
   end
 
   def cast(:raw, generic_map) do
     generic_map
+  end
+
+  def cast({implementation, inner}, generic_map) when is_map(generic_map) do
+    implementation.cast({inner, generic_map})
   end
 
   def cast(implementation, generic_map) when is_map(generic_map) do
