@@ -6,7 +6,7 @@ API client for [Resend](https://resend.com/), the new email API for developers.
 
 ## API
 
-* [`Resend.Email`](https://hexdocs.pm/resend/Resend.Email.html)
+* [`Resend.Emails`](https://hexdocs.pm/resend/Resend.Emails.html)
 * 🚧 `Resend.Domains`
 * 🚧 `Resend.ApiKeys`
 
@@ -33,7 +33,7 @@ config :resend, Resend.Client, api_key: "re_123456789"
 
 ```ex
 # Send an email
-Resend.Email.send(%{
+Resend.Emails.send(%{
   to: "me@example.com",
   from: "myapp@example.com",
   subject: "Hello!",
@@ -53,7 +53,7 @@ Mix.install([
 client = Resend.client(api_key: "re_123456789")
 
 # Replace `:to` and `:from` with valid emails
-Resend.Email.send(client, %{
+Resend.Emails.send(client, %{
   to: "me@example.com",
   from: "myapp@example.com",
   subject: "Hello!",

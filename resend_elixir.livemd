@@ -22,7 +22,7 @@ Kino.nothing()
 client = Resend.client(api_key: System.fetch_env!("LB_RESEND_KEY"))
 
 {:ok, email} =
-  Resend.Email.send(
+  Resend.Emails.send(
     client,
     %{
       to: Kino.Input.read(to),
@@ -34,7 +34,7 @@ client = Resend.client(api_key: System.fetch_env!("LB_RESEND_KEY"))
 ```
 
 ```elixir
-Resend.Email.get(client, email.id)
+Resend.Emails.get(client, email.id)
 ```
 
 <!-- livebook:{"offset":764,"stamp":{"token":"QTEyOEdDTQ.c80Ehzs75I_SFF-3Bex_Fkr9eJGYQonqYwZmHxq7XLJcl984qADo2blfNgI.sa6UDHU_fMjd_kHZ.djJSwaSoIWP0iEsH9cQTP_Jy3vr1Jr_fMSbyyduwAGKgOfvh_681-02TpeBWpg._B-Ic2f26-6y2nZcq4Kr8w","version":1}} -->

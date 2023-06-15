@@ -1,4 +1,4 @@
-defmodule Resend.EmailTest do
+defmodule Resend.EmailsTest do
   use Resend.TestCase
 
   alias Resend.ClientMock
@@ -15,7 +15,7 @@ defmodule Resend.EmailTest do
       opts = [to: to, subject: subject, from: from, text: text]
       ClientMock.mock_send_email(context, assert_fields: opts)
 
-      assert {:ok, %Resend.Email{}} = Resend.Email.send(Map.new(opts))
+      assert {:ok, %Resend.Emails.Email{}} = Resend.Emails.send(Map.new(opts))
     end
 
     test "Gets an email by ID", context do
@@ -25,8 +25,8 @@ defmodule Resend.EmailTest do
 
       ClientMock.mock_get_email(context)
 
-      assert {:ok, %Resend.Email{id: ^email_id, to: [^to], from: ^from}} =
-               Resend.Email.get(email_id)
+      assert {:ok, %Resend.Emails.Email{id: ^email_id, to: [^to], from: ^from}} =
+               Resend.Emails.get(email_id)
     end
 
     if not live_mode?() do
@@ -44,7 +44,7 @@ defmodule Resend.EmailTest do
         )
 
         assert {:error, %Resend.Error{name: "restricted_api_key", status_code: 401}} =
-                 Resend.Email.get(email_id)
+                 Resend.Emails.get(email_id)
       end
     end
   end
