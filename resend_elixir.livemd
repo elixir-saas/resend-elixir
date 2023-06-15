@@ -2,25 +2,37 @@
 
 ```elixir
 Mix.install([
-  {:resend, "~> 0.3.0"},
+  {:resend, "~> 0.4.0"},
   {:kino, "~> 0.9.4"}
 ])
 ```
 
-## Send an email
+## Create a client
+
+To start using Resend, create a `client` with the API key you created in your web dashboard:
+
+```elixir
+client = Resend.client(api_key: System.fetch_env!("LB_RESEND_KEY"))
+```
+
+Note that if you choose to configure Resend in your app config, passing a client struct is always optional.
+
+## Sending email
+
+We've created some inputs to make sending emails easy. Feel free to replace these as needed!
 
 ```elixir
 to = Kino.Input.text("To") |> Kino.render()
-from = Kino.Input.text("From", default: "onboarding@resend.com") |> Kino.render()
+from = Kino.Input.text("From", default: "onboarding@resend.dev") |> Kino.render()
 subject = Kino.Input.text("Subject", default: "Hello World") |> Kino.render()
 text = Kino.Input.textarea("Text", default: "It works!") |> Kino.render()
 
 Kino.nothing()
 ```
 
-```elixir
-client = Resend.client(api_key: System.fetch_env!("LB_RESEND_KEY"))
+Read the input values and send our first email with Resend:
 
+```elixir
 {:ok, email} =
   Resend.Emails.send(
     client,
@@ -33,8 +45,63 @@ client = Resend.client(api_key: System.fetch_env!("LB_RESEND_KEY"))
   )
 ```
 
+We can get details about this email by looking it up with its ID:
+
 ```elixir
 Resend.Emails.get(client, email.id)
 ```
 
-<!-- livebook:{"offset":764,"stamp":{"token":"QTEyOEdDTQ.c80Ehzs75I_SFF-3Bex_Fkr9eJGYQonqYwZmHxq7XLJcl984qADo2blfNgI.sa6UDHU_fMjd_kHZ.djJSwaSoIWP0iEsH9cQTP_Jy3vr1Jr_fMSbyyduwAGKgOfvh_681-02TpeBWpg._B-Ic2f26-6y2nZcq4Kr8w","version":1}} -->
+## Managing domains
+
+Lets create a new domain, we'll just use a random string:
+
+```elixir
+{:ok, domain} =
+  Resend.Domains.create(
+    client,
+    name: Base.encode16(:rand.bytes(8), case: :lower) <> ".com"
+  )
+```
+
+We can list all our domains, to see that our new one has been added:
+
+```elixir
+Resend.Domains.list(client)
+```
+
+Now that we've demonstrated that we can create domains, lets remove the random one we created:
+
+```elixir
+{:ok, _deleted} = Resend.Domains.remove(client, domain.id)
+```
+
+## Managing API keys
+
+We can manage API keys too. Let's create a new one that can only send to our new domain. Note that we must also apply the `"sending_access"` permission when specifying a `:domain_id`.
+
+```elixir
+{:ok, api_key} =
+  Resend.ApiKeys.create(client,
+    name: "For random domain",
+    permission: "sending_access",
+    domain_id: domain.id
+  )
+```
+
+The `:token` field we get back contains our new API token. It's the only time it's show, so make sure to save it some place where it won't get lost.
+
+Let's take a look at our new API key in the list of all API keys:
+
+```elixir
+Resend.ApiKeys.list(client)
+```
+
+Nice!
+
+Lastly, we'll remove the API key we created to keep our account nice and tidy:
+
+```elixir
+{:ok, _deleted} = Resend.ApiKeys.remove(client, api_key.id)
+```
+
+<!-- livebook:{"offset":2511,"stamp":{"token":"QTEyOEdDTQ.SkeVKU3HxgWf9NDYfZ00hmmfkmRM-H3OSfb8rTM0VVcvsJqIXvKjw0FUeyo.A1Vah4do4eSa7x77.oFpWBoAZHs_1s0lh7EKMJuuU2BSddg0DAnX-X9EG6NrzzonSsXZT-no1zHh_sA.tapBdO4vJH3QxEO0Y4B1Iw","version":1}} -->
