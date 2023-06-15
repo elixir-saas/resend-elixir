@@ -5,7 +5,7 @@ defmodule Resend.EmailsTest do
 
   setup :setup_env
 
-  describe "/email" do
+  describe "/emails" do
     test "Sends an email with a text body", context do
       to = context.to
       from = context.from

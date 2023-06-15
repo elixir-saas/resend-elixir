@@ -1,8 +1,18 @@
 defmodule Resend.Domains do
+  @moduledoc """
+  Manage domains in Resend.
+  """
+
   alias Resend.Domains.Domain
 
   @doc """
-  TODO: Documentation.
+  Creates a new domain.
+
+  Parameter options:
+
+    * `:name` - The domain name (required)
+    * `:region` - Region to deliver emails from, on of: `["us-east-1", "eu-west-1", "sa-east-1"]`
+
   """
   @spec create(Keyword.t()) :: Resend.Client.response(Domain.t())
   @spec create(Resend.Client.t(), Keyword.t()) :: Resend.Client.response(Domain.t())
@@ -14,7 +24,7 @@ defmodule Resend.Domains do
   end
 
   @doc """
-  TODO: Documentation.
+  Gets a domain given an ID.
   """
   @spec get(String.t()) :: Resend.Client.response(Domain.t())
   @spec get(Resend.Client.t(), String.t()) :: Resend.Client.response(Domain.t())
@@ -27,7 +37,7 @@ defmodule Resend.Domains do
   end
 
   @doc """
-  TODO: Documentation.
+  Begins the verification process for a domain.
   """
   @spec verify(String.t()) :: Resend.Client.response(Domain.t())
   @spec verify(Resend.Client.t(), String.t()) :: Resend.Client.response(Domain.t())
@@ -40,7 +50,7 @@ defmodule Resend.Domains do
   end
 
   @doc """
-  TODO: Documentation.
+  Lists all domains.
   """
   @spec list() :: Resend.Client.response(Resend.List.t(Domain.t()))
   @spec list(Resend.Client.t()) :: Resend.Client.response(Resend.List.t(Domain.t()))
@@ -49,7 +59,7 @@ defmodule Resend.Domains do
   end
 
   @doc """
-  TODO: Documentation.
+  Removes a domain. Caution: This can't be undone!
   """
   @spec remove(String.t()) :: Resend.Client.response(Domain.t())
   @spec remove(Resend.Client.t(), String.t()) :: Resend.Client.response(Domain.t())

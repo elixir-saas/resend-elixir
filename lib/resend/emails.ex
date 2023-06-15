@@ -19,7 +19,8 @@ defmodule Resend.Emails do
     * `:html` - The HTML-formatted body of the email
     * `:text` - The text-formatted body of the email
 
-  You are required to include one or both of the `:html` and `:text` options.
+  You must include one or both of the `:html` and `:text` options.
+
   """
   @spec send(map()) :: Resend.Client.response(Email.t())
   @spec send(Resend.Client.t(), map()) :: Resend.Client.response(Email.t())
@@ -36,6 +37,10 @@ defmodule Resend.Emails do
     })
   end
 
+  @doc """
+  Gets an email given an ID.
+
+  """
   @spec get(String.t()) :: Resend.Client.response(Email.t())
   @spec get(Resend.Client.t(), String.t()) :: Resend.Client.response(Email.t())
   def get(client \\ Resend.client(), email_id) do
