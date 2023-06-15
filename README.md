@@ -17,7 +17,7 @@ Install by adding `resend` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:resend, "~> 0.4.0"}
+    {:resend, "~> 0.4.1"}
   ]
 end
 ```
@@ -46,7 +46,7 @@ Elixir script example:
 ```ex
 # Save this file as `resend.exs`, run it with `elixir resend.exs`
 Mix.install([
-  {:resend, "~> 0.4.0"}
+  {:resend, "~> 0.4.1"}
 ])
 
 # Replace with your API key
