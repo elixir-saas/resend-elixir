@@ -2,6 +2,7 @@ defmodule Resend.MixProject do
   use Mix.Project
 
   @version "0.4.0"
+  @source_url "https://github.com/elixir-saas/resend-elixir"
 
   def project do
     [
@@ -12,6 +13,7 @@ defmodule Resend.MixProject do
       start_permanent: Mix.env() == :prod,
       description: description(),
       package: package(),
+      docs: docs(),
       deps: deps()
     ]
   end
@@ -22,8 +24,17 @@ defmodule Resend.MixProject do
 
   defp package() do
     [
+      description: description(),
       licenses: ["Apache-2.0"],
-      links: %{}
+      maintainers: [
+        "Justin Tormey"
+      ],
+      links: %{
+        "GitHub" => @source_url,
+        "Resend" => "https://resend.com/",
+        "Elixir Example" => "https://github.com/resendlabs/resend-elixir-example",
+        "Phoenix Example" => "https://github.com/resendlabs/resend-phoenix-example"
+      }
     ]
   end
 
@@ -46,6 +57,47 @@ defmodule Resend.MixProject do
       {:hackney, "~> 1.9"},
       {:dialyxir, "~> 1.2", only: :dev, runtime: false},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
+    ]
+  end
+
+  defp docs() do
+    [
+      extras: [
+        "README.md": [title: "Overview"]
+      ],
+      main: "readme",
+      source_url: @source_url,
+      source_ref: "v#{@version}",
+      groups_for_modules: groups_for_modules()
+    ]
+  end
+
+  defp groups_for_modules() do
+    [
+      "Core API": [
+        Resend.ApiKeys,
+        Resend.Domains,
+        Resend.Emails
+      ],
+      "Response Structs": [
+        Resend.ApiKeys.ApiKey,
+        Resend.Domains.Domain,
+        Resend.Domains.Domain.Record,
+        Resend.Emails.Email,
+        Resend.Empty,
+        Resend.Error,
+        Resend.List
+      ],
+      Swoosh: [
+        Resend.Swoosh.Adapter
+      ],
+      "API Client": [
+        Resend.Client,
+        Resend.Client.TeslaClient
+      ],
+      Utilities: [
+        Resend.Util
+      ]
     ]
   end
 end

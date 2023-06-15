@@ -1,4 +1,8 @@
 defmodule Resend.List do
+  @moduledoc """
+  Casts a response to a `%Resend.List{}` of structs.
+  """
+
   alias Resend.Castable
 
   @behaviour Resend.Castable

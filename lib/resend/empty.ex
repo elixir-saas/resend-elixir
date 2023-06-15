@@ -1,4 +1,8 @@
 defmodule Resend.Empty do
+  @moduledoc """
+  Empty response.
+  """
+
   @behaviour Resend.Castable
 
   @type t() :: %__MODULE__{}
