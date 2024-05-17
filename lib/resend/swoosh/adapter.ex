@@ -41,6 +41,7 @@ defmodule Resend.Swoosh.Adapter do
       bcc: format_recipients(email.bcc),
       cc: format_recipients(email.cc),
       reply_to: format_recipients(email.reply_to),
+      headers: email.headers,
       html: email.html_body,
       text: email.text_body
     })

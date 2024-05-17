@@ -16,6 +16,7 @@ defmodule Resend.Emails do
     * `:bcc` - Additional email addresses to blind-copy, may be a single address or a list of addresses
     * `:reply_to` - Specify the email that recipients will reply to
     * `:subject` - Subject line of the email
+    * `:headers` - Map of headers to add to the email with corresponding string values
     * `:html` - The HTML-formatted body of the email
     * `:text` - The text-formatted body of the email
 
@@ -32,6 +33,7 @@ defmodule Resend.Emails do
       cc: opts[:cc],
       bcc: opts[:bcc],
       reply_to: opts[:reply_to],
+      headers: opts[:headers],
       html: opts[:html],
       text: opts[:text]
     })

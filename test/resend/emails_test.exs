@@ -11,8 +11,16 @@ defmodule Resend.EmailsTest do
       from = context.from
       subject = "Test Email"
       text = "Testing Resend"
+      headers = %{"x-test-header" => "resend-elixir"}
 
-      opts = [to: to, subject: subject, from: from, text: text]
+      opts = [
+        to: to,
+        subject: subject,
+        from: from,
+        text: text,
+        headers: headers
+      ]
+
       ClientMock.mock_send_email(context, assert_fields: opts)
 
       assert {:ok, %Resend.Emails.Email{}} = Resend.Emails.send(Map.new(opts))
