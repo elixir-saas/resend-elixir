@@ -43,7 +43,8 @@ defmodule Resend.Swoosh.Adapter do
       reply_to: format_recipients(email.reply_to),
       headers: email.headers,
       html: email.html_body,
-      text: email.text_body
+      text: email.text_body,
+      attachments: format_attachments(email.attachments)
     })
   end
 
@@ -65,6 +66,18 @@ defmodule Resend.Swoosh.Adapter do
     Resend.validate_config!(config)
     :ok
   end
+
+  defp format_attachment(%Swoosh.Attachment{} = attachment) do
+    %Resend.Emails.Attachment{
+      content: attachment.data,
+      content_type: attachment.content_type,
+      filename: attachment.filename,
+      path: attachment.path
+    }
+  end
+
+  defp format_attachments(nil), do: nil
+  defp format_attachments(attachments), do: Enum.map(attachments, &format_attachment/1)
 
   defp format_sender(nil), do: nil
   defp format_sender(from) when is_binary(from), do: from

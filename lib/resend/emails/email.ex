@@ -3,6 +3,7 @@ defmodule Resend.Emails.Email do
   Resend Email struct.
   """
 
+  alias Resend.Emails.Attachment
   alias Resend.Util
 
   @behaviour Resend.Castable
@@ -18,6 +19,7 @@ defmodule Resend.Emails.Email do
           headers: map(),
           text: String.t() | nil,
           html: String.t() | nil,
+          attachments: list(Attachment.t()) | nil,
           last_event: String.t() | nil,
           created_at: DateTime.t() | nil
         }
@@ -34,6 +36,7 @@ defmodule Resend.Emails.Email do
     :headers,
     :text,
     :html,
+    :attachments,
     :last_event,
     :created_at
   ]
@@ -51,6 +54,7 @@ defmodule Resend.Emails.Email do
       headers: map["headers"],
       text: map["text"],
       html: map["html"],
+      attachments: map["attachments"],
       last_event: map["last_event"],
       created_at: Util.parse_iso8601(map["created_at"])
     }
