@@ -19,6 +19,7 @@ defmodule Resend.Emails do
     * `:headers` - Map of headers to add to the email with corresponding string values
     * `:html` - The HTML-formatted body of the email
     * `:text` - The text-formatted body of the email
+    * `:attachments` - List of attachments to include in the email
 
   You must include one or both of the `:html` and `:text` options.
 
@@ -35,7 +36,8 @@ defmodule Resend.Emails do
       reply_to: opts[:reply_to],
       headers: opts[:headers],
       html: opts[:html],
-      text: opts[:text]
+      text: opts[:text],
+      attachments: opts[:attachments]
     })
   end
 
