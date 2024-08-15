@@ -11,7 +11,7 @@ defmodule Resend.Emails.Attachment do
     :content,
     :content_type,
     :filename,
-    :path
+    path: ""
   ]
 
   @impl true
