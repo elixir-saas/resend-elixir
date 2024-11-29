@@ -38,7 +38,7 @@ defmodule Resend.Emails do
       html: opts[:html],
       text: opts[:text],
       attachments: opts[:attachments],
-      scheduled_at: opts[:scheduled_at]
+      scheduled_at: opts[:scheduled_at] || ""
     })
   end
 
