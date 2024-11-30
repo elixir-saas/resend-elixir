@@ -55,4 +55,15 @@ defmodule Resend.Emails do
       ]
     )
   end
+
+  @doc """
+  Updates an email given an ID.
+  """
+  @spec update(String.t(), map()) :: Resend.Client.response(Email.t())
+  @spec update(Resend.Client.t(), String.t(), map()) :: Resend.Client.response(Email.t())
+  def update(client \\ Resend.client(), email_id, opts) do
+    Resend.Client.patch(client, Email, "/emails/:id",
+      opts: [path_params: [id: email_id], body: opts]
+    )
+  end
 end
