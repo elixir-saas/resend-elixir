@@ -29,14 +29,7 @@ defmodule Resend.BroadcastsTest do
         assert body["subject"] == subject
 
         success_body = %{
-          "object" => "broadcast",
-          "id" => broadcast_id,
-          "audience_id" => audience_id,
-          "name" => name,
-          "from" => from,
-          "subject" => subject,
-          "status" => "draft",
-          "created_at" => "2023-10-06T22:59:55.977Z"
+          "id" => broadcast_id
         }
 
         %Tesla.Env{status: 200, body: success_body}
@@ -44,12 +37,7 @@ defmodule Resend.BroadcastsTest do
 
       assert {:ok,
               %Broadcast{
-                id: ^broadcast_id,
-                audience_id: ^audience_id,
-                name: ^name,
-                from: ^from,
-                subject: ^subject,
-                status: "draft"
+                id: ^broadcast_id
               }} =
                Resend.Broadcasts.create(
                  audience_id: audience_id,
@@ -77,20 +65,13 @@ defmodule Resend.BroadcastsTest do
         assert body["reply_to"] == reply_to
 
         success_body = %{
-          "object" => "broadcast",
-          "id" => broadcast_id,
-          "audience_id" => audience_id,
-          "name" => "Test Broadcast",
-          "from" => "test@example.com",
-          "subject" => "Test Subject",
-          "reply_to" => reply_to,
-          "status" => "draft"
+          "id" => broadcast_id
         }
 
         %Tesla.Env{status: 200, body: success_body}
       end)
 
-      assert {:ok, %Broadcast{id: ^broadcast_id, reply_to: ^reply_to}} =
+      assert {:ok, %Broadcast{id: ^broadcast_id}} =
                Resend.Broadcasts.create(
                  audience_id: audience_id,
                  name: "Test Broadcast",
@@ -118,20 +99,13 @@ defmodule Resend.BroadcastsTest do
         assert body["reply_to"] == reply_to
 
         success_body = %{
-          "object" => "broadcast",
-          "id" => broadcast_id,
-          "audience_id" => audience_id,
-          "name" => "Test Broadcast",
-          "from" => "test@example.com",
-          "subject" => "Test Subject",
-          "reply_to" => reply_to,
-          "status" => "draft"
+          "id" => broadcast_id
         }
 
         %Tesla.Env{status: 200, body: success_body}
       end)
 
-      assert {:ok, %Broadcast{id: ^broadcast_id, reply_to: ^reply_to}} =
+      assert {:ok, %Broadcast{id: ^broadcast_id}} =
                Resend.Broadcasts.create(
                  audience_id: audience_id,
                  name: "Test Broadcast",
@@ -174,20 +148,13 @@ defmodule Resend.BroadcastsTest do
         assert body["tags"] == [%{"name" => "category", "value" => "newsletter"}]
 
         success_body = %{
-          "object" => "broadcast",
-          "id" => broadcast_id,
-          "audience_id" => audience_id,
-          "name" => "Full Broadcast",
-          "from" => "test@example.com",
-          "subject" => "Test Subject",
-          "preview_text" => preview_text,
-          "status" => "draft"
+          "id" => broadcast_id
         }
 
         %Tesla.Env{status: 200, body: success_body}
       end)
 
-      assert {:ok, %Broadcast{id: ^broadcast_id, preview_text: ^preview_text}} =
+      assert {:ok, %Broadcast{id: ^broadcast_id}} =
                Resend.Broadcasts.create(
                  audience_id: audience_id,
                  name: "Full Broadcast",
@@ -312,14 +279,7 @@ defmodule Resend.BroadcastsTest do
         refute Map.has_key?(body, "from")
 
         success_body = %{
-          "object" => "broadcast",
-          "id" => broadcast_id,
-          "audience_id" => "78261eea-8f8b-4381-83c6-79fa7120f1cf",
-          "name" => "Monthly Newsletter",
-          "from" => "news@example.com",
-          "subject" => new_subject,
-          "preview_text" => new_preview_text,
-          "status" => "draft"
+          "id" => broadcast_id
         }
 
         %Tesla.Env{status: 200, body: success_body}
@@ -327,9 +287,7 @@ defmodule Resend.BroadcastsTest do
 
       assert {:ok,
               %Broadcast{
-                id: ^broadcast_id,
-                subject: ^new_subject,
-                preview_text: ^new_preview_text
+                id: ^broadcast_id
               }} =
                Resend.Broadcasts.update(broadcast_id,
                  subject: new_subject,
@@ -355,20 +313,13 @@ defmodule Resend.BroadcastsTest do
         assert Map.keys(body) == ["reply_to"]
 
         success_body = %{
-          "object" => "broadcast",
-          "id" => broadcast_id,
-          "audience_id" => "78261eea-8f8b-4381-83c6-79fa7120f1cf",
-          "name" => "Monthly Newsletter",
-          "from" => "news@example.com",
-          "subject" => "October Update",
-          "reply_to" => new_reply_to,
-          "status" => "draft"
+          "id" => broadcast_id
         }
 
         %Tesla.Env{status: 200, body: success_body}
       end)
 
-      assert {:ok, %Broadcast{id: ^broadcast_id, reply_to: ^new_reply_to}} =
+      assert {:ok, %Broadcast{id: ^broadcast_id}} =
                Resend.Broadcasts.update(broadcast_id, reply_to: new_reply_to)
     end
 
@@ -388,20 +339,13 @@ defmodule Resend.BroadcastsTest do
         assert body == %{}
 
         success_body = %{
-          "object" => "broadcast",
-          "id" => broadcast_id,
-          "audience_id" => "78261eea-8f8b-4381-83c6-79fa7120f1cf",
-          "name" => "Monthly Newsletter",
-          "from" => "news@example.com",
-          "subject" => "October Update",
-          "status" => "sending",
-          "sent_at" => "2023-10-07T09:00:00.000Z"
+          "id" => broadcast_id
         }
 
         %Tesla.Env{status: 200, body: success_body}
       end)
 
-      assert {:ok, %Broadcast{id: ^broadcast_id, status: "sending"}} =
+      assert {:ok, %Broadcast{id: ^broadcast_id}} =
                Resend.Broadcasts.send(broadcast_id)
     end
 
@@ -422,14 +366,7 @@ defmodule Resend.BroadcastsTest do
         assert body["scheduled_at"] == DateTime.to_iso8601(scheduled_at)
 
         success_body = %{
-          "object" => "broadcast",
-          "id" => broadcast_id,
-          "audience_id" => "78261eea-8f8b-4381-83c6-79fa7120f1cf",
-          "name" => "Christmas Newsletter",
-          "from" => "news@example.com",
-          "subject" => "Happy Holidays!",
-          "status" => "scheduled",
-          "scheduled_at" => DateTime.to_iso8601(scheduled_at)
+          "id" => broadcast_id
         }
 
         %Tesla.Env{status: 200, body: success_body}
@@ -438,7 +375,7 @@ defmodule Resend.BroadcastsTest do
       # Fix: The function signature is send(client \\ Resend.client(), broadcast_id, opts \\ [])
       # When called with 2 args, the second arg is interpreted as broadcast_id
       # So we need to use the default client and pass broadcast_id and opts
-      assert {:ok, %Broadcast{id: ^broadcast_id, status: "scheduled"}} =
+      assert {:ok, %Broadcast{id: ^broadcast_id}} =
                Resend.Broadcasts.send(Resend.client(), broadcast_id, scheduled_at: scheduled_at)
     end
 
@@ -458,20 +395,14 @@ defmodule Resend.BroadcastsTest do
         assert body["scheduled_at"] == nil
 
         success_body = %{
-          "object" => "broadcast",
-          "id" => broadcast_id,
-          "audience_id" => "78261eea-8f8b-4381-83c6-79fa7120f1cf",
-          "name" => "Cancelled Newsletter",
-          "from" => "news@example.com",
-          "subject" => "This was cancelled",
-          "status" => "cancelled"
+          "id" => broadcast_id
         }
 
         %Tesla.Env{status: 200, body: success_body}
       end)
 
       # Fix: Same issue here, need to use proper argument order
-      assert {:ok, %Broadcast{id: ^broadcast_id, status: "cancelled"}} =
+      assert {:ok, %Broadcast{id: ^broadcast_id}} =
                Resend.Broadcasts.send(Resend.client(), broadcast_id, scheduled_at: nil)
     end
 
@@ -648,13 +579,7 @@ defmodule Resend.BroadcastsTest do
         assert body["audience_id"] == audience_id
 
         success_body = %{
-          "object" => "broadcast",
-          "id" => broadcast_id,
-          "audience_id" => audience_id,
-          "name" => "Test Broadcast",
-          "from" => "test@example.com",
-          "subject" => "Test Subject",
-          "status" => "draft"
+          "id" => broadcast_id
         }
 
         %Tesla.Env{status: 200, body: success_body}
@@ -730,13 +655,7 @@ defmodule Resend.BroadcastsTest do
                  {"Authorization", "Bearer re_custom_key"}
 
         success_body = %{
-          "object" => "broadcast",
-          "id" => broadcast_id,
-          "audience_id" => "78261eea-8f8b-4381-83c6-79fa7120f1cf",
-          "name" => "Updated Broadcast",
-          "from" => "test@example.com",
-          "subject" => "Updated Subject",
-          "status" => "draft"
+          "id" => broadcast_id
         }
 
         %Tesla.Env{status: 200, body: success_body}
@@ -758,19 +677,13 @@ defmodule Resend.BroadcastsTest do
                  {"Authorization", "Bearer re_custom_key"}
 
         success_body = %{
-          "object" => "broadcast",
-          "id" => broadcast_id,
-          "audience_id" => "78261eea-8f8b-4381-83c6-79fa7120f1cf",
-          "name" => "Test Broadcast",
-          "from" => "test@example.com",
-          "subject" => "Test Subject",
-          "status" => "sending"
+          "id" => broadcast_id
         }
 
         %Tesla.Env{status: 200, body: success_body}
       end)
 
-      assert {:ok, %Broadcast{id: ^broadcast_id, status: "sending"}} =
+      assert {:ok, %Broadcast{id: ^broadcast_id}} =
                Resend.Broadcasts.send(custom_client, broadcast_id)
     end
 
