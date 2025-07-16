@@ -77,6 +77,7 @@ defmodule Resend.MixProject do
       "Core API": [
         Resend.ApiKeys,
         Resend.Audiences,
+        Resend.Broadcasts,
         Resend.Contacts,
         Resend.Domains,
         Resend.Emails
@@ -84,6 +85,7 @@ defmodule Resend.MixProject do
       "Response Structs": [
         Resend.ApiKeys.ApiKey,
         Resend.Audiences.Audience,
+        Resend.Broadcasts.Broadcast,
         Resend.Contacts.Contact,
         Resend.Domains.Domain,
         Resend.Domains.Domain.Record,
