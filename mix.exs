@@ -77,12 +77,14 @@ defmodule Resend.MixProject do
       "Core API": [
         Resend.ApiKeys,
         Resend.Audiences,
+        Resend.Contacts,
         Resend.Domains,
         Resend.Emails
       ],
       "Response Structs": [
         Resend.ApiKeys.ApiKey,
         Resend.Audiences.Audience,
+        Resend.Contacts.Contact,
         Resend.Domains.Domain,
         Resend.Domains.Domain.Record,
         Resend.Emails.Email,
