@@ -11,6 +11,7 @@ defmodule Resend.Emails.Attachment do
     :content,
     :content_type,
     :filename,
+    :inline_content_id,
     path: ""
   ]
 
@@ -20,7 +21,8 @@ defmodule Resend.Emails.Attachment do
       content: map["content"],
       content_type: map["content_type"],
       filename: map["filename"],
-      path: map["path"]
+      path: map["path"],
+      inline_content_id: map["inline_content_id"]
     }
   end
 end
