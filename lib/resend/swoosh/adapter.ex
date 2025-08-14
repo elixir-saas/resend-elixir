@@ -68,11 +68,13 @@ defmodule Resend.Swoosh.Adapter do
   end
 
   defp format_attachment(%Swoosh.Attachment{} = attachment) do
+    cid = if is_nil(attachment.cid), do: attachment.filename, else: attachment.cid
+
     %Resend.Emails.Attachment{
       content: Swoosh.Attachment.get_content(attachment, :base64),
       content_type: attachment.content_type,
       filename: attachment.filename,
-      inline_content_id: attachment.filename
+      inline_content_id: cid
     }
   end
 
