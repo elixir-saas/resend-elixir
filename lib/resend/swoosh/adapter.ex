@@ -71,7 +71,8 @@ defmodule Resend.Swoosh.Adapter do
     %Resend.Emails.Attachment{
       content: Swoosh.Attachment.get_content(attachment, :base64),
       content_type: attachment.content_type,
-      filename: attachment.filename
+      filename: attachment.filename,
+      content_id: attachment.cid
     }
   end
 
