@@ -81,6 +81,22 @@ defmodule Resend.Client do
     |> handle_response(path, castable_module)
   end
 
+  @spec patch(t(), Castable.impl(), String.t()) :: response(any())
+  @spec patch(t(), Castable.impl(), String.t(), map()) :: response(any())
+  @spec patch(t(), Castable.impl(), String.t(), map(), Keyword.t()) :: response(any())
+  def patch(client, castable_module, path, body \\ %{}, opts \\ []) do
+    client_module = client.client || Resend.Client.TeslaClient
+
+    opts =
+      opts
+      |> Keyword.put(:method, :patch)
+      |> Keyword.put(:url, path)
+      |> Keyword.put(:body, body)
+
+    client_module.request(client, opts)
+    |> handle_response(path, castable_module)
+  end
+
   defp handle_response(response, path, castable_module) do
     case response do
       {:ok, %{body: "", status: status}} when status in 200..299 ->
