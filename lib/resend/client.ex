@@ -40,12 +40,7 @@ defmodule Resend.Client do
   def get(client, castable_module, path, opts \\ []) do
     client_module = client.client || Resend.Client.TeslaClient
 
-    opts =
-      opts
-      |> Keyword.put(:method, :get)
-      |> Keyword.put(:url, path)
-
-    client_module.request(client, opts)
+    client_module.request(client, method: :get, url: path, opts: opts)
     |> handle_response(path, castable_module)
   end
 
@@ -55,13 +50,7 @@ defmodule Resend.Client do
   def post(client, castable_module, path, body \\ %{}, opts \\ []) do
     client_module = client.client || Resend.Client.TeslaClient
 
-    opts =
-      opts
-      |> Keyword.put(:method, :post)
-      |> Keyword.put(:url, path)
-      |> Keyword.put(:body, body)
-
-    client_module.request(client, opts)
+    client_module.request(client, method: :post, url: path, body: body, opts: opts)
     |> handle_response(path, castable_module)
   end
 
@@ -71,13 +60,7 @@ defmodule Resend.Client do
   def delete(client, castable_module, path, body \\ %{}, opts \\ []) do
     client_module = client.client || Resend.Client.TeslaClient
 
-    opts =
-      opts
-      |> Keyword.put(:method, :delete)
-      |> Keyword.put(:url, path)
-      |> Keyword.put(:body, body)
-
-    client_module.request(client, opts)
+    client_module.request(client, method: :delete, url: path, body: body, opts: opts)
     |> handle_response(path, castable_module)
   end
 

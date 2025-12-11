@@ -26,19 +26,25 @@ defmodule Resend.Emails do
   """
   @spec send(map()) :: Resend.Client.response(Email.t())
   @spec send(Resend.Client.t(), map()) :: Resend.Client.response(Email.t())
-  def send(client \\ Resend.client(), opts) do
-    Resend.Client.post(client, Email, "/emails", %{
-      subject: opts[:subject],
-      to: opts[:to],
-      from: opts[:from],
-      cc: opts[:cc],
-      bcc: opts[:bcc],
-      reply_to: opts[:reply_to],
-      headers: opts[:headers],
-      html: opts[:html],
-      text: opts[:text],
-      attachments: opts[:attachments]
-    })
+  def send(client \\ Resend.client(), params, opts \\ []) do
+    Resend.Client.post(
+      client,
+      Email,
+      "/emails",
+      %{
+        subject: params[:subject],
+        to: params[:to],
+        from: params[:from],
+        cc: params[:cc],
+        bcc: params[:bcc],
+        reply_to: params[:reply_to],
+        headers: params[:headers],
+        html: params[:html],
+        text: params[:text],
+        attachments: params[:attachments]
+      },
+      opts
+    )
   end
 
   @doc """
@@ -47,11 +53,7 @@ defmodule Resend.Emails do
   """
   @spec get(String.t()) :: Resend.Client.response(Email.t())
   @spec get(Resend.Client.t(), String.t()) :: Resend.Client.response(Email.t())
-  def get(client \\ Resend.client(), email_id) do
-    Resend.Client.get(client, Email, "/emails/:id",
-      opts: [
-        path_params: [id: email_id]
-      ]
-    )
+  def get(client \\ Resend.client(), email_id, opts \\ []) do
+    Resend.Client.get(client, Email, "/emails/#{email_id}", opts)
   end
 end
