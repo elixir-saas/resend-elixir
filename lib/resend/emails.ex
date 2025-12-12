@@ -20,14 +20,29 @@ defmodule Resend.Emails do
     * `:html` - The HTML-formatted body of the email
     * `:text` - The text-formatted body of the email
     * `:attachments` - List of attachments to include in the email
+    * `:template` - Template to use for the email, a map with `:id` and `:variables` keys
 
-  You must include one or both of the `:html` and `:text` options.
+  You must include one or both of the `:html` and `:text` options, or use a `:template`.
+
+  ## Template Example
+
+      Resend.Emails.send(%{
+        from: "Acme <[email protected]>",
+        to: "[email protected]",
+        template: %{
+          id: "order-confirmation",
+          variables: %{
+            PRODUCT: "Vintage Macintosh",
+            PRICE: 499
+          }
+        }
+      })
 
   """
   @spec send(map()) :: Resend.Client.response(Email.t())
   @spec send(Resend.Client.t(), map()) :: Resend.Client.response(Email.t())
   def send(client \\ Resend.client(), opts) do
-    Resend.Client.post(client, Email, "/emails", %{
+    payload = %{
       subject: opts[:subject],
       to: opts[:to],
       from: opts[:from],
@@ -38,7 +53,16 @@ defmodule Resend.Emails do
       html: opts[:html],
       text: opts[:text],
       attachments: opts[:attachments]
-    })
+    }
+
+    payload =
+      if opts[:template] do
+        Map.put(payload, :template, opts[:template])
+      else
+        payload
+      end
+
+    Resend.Client.post(client, Email, "/emails", payload)
   end
 
   @doc """
