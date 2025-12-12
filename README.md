@@ -63,6 +63,48 @@ Resend.Emails.send(client, %{
 
 View additional documentation at <https://hexdocs.pm/resend>.
 
+## Templates
+
+Resend supports [templates](https://resend.com/docs/dashboard/templates/introduction) for sending transactional emails. You can use templates with both the direct API and the Swoosh adapter.
+
+### Using Templates with the Direct API
+
+```ex
+Resend.Emails.send(%{
+  from: "Acme <[email protected]>",
+  to: "[email protected]",
+  template: %{
+    id: "order-confirmation",
+    variables: %{
+      PRODUCT: "Vintage Macintosh",
+      PRICE: 499
+    }
+  }
+})
+```
+
+### Using Templates with Swoosh
+
+To use templates with the Swoosh adapter, use `put_provider_option/3` to add the template information:
+
+```ex
+import Swoosh.Email
+
+new()
+|> from({"Acme", "[email protected]"})
+|> to("[email protected]")
+|> put_provider_option(:template, %{
+  id: "order-confirmation",
+  variables: %{
+    PRODUCT: "Vintage Macintosh",
+    PRICE: 499
+  }
+})
+|> MyApp.Mailer.deliver()
+```
+
+When using templates, you don't need to set the `html_body` or `text_body` as the template will provide the content.
+
 ## Swoosh Adapter
 
 This library includes a Swoosh adapter to make using Resend with a new Phoenix project as easy as

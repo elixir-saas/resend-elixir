@@ -20,6 +20,7 @@ defmodule Resend.Emails.Email do
           text: String.t() | nil,
           html: String.t() | nil,
           attachments: list(Attachment.t()) | nil,
+          template: map() | nil,
           last_event: String.t() | nil,
           created_at: DateTime.t() | nil
         }
@@ -37,6 +38,7 @@ defmodule Resend.Emails.Email do
     :text,
     :html,
     :attachments,
+    :template,
     :last_event,
     :created_at
   ]
@@ -55,6 +57,7 @@ defmodule Resend.Emails.Email do
       text: map["text"],
       html: map["html"],
       attachments: map["attachments"],
+      template: map["template"],
       last_event: map["last_event"],
       created_at: Util.parse_iso8601(map["created_at"])
     }

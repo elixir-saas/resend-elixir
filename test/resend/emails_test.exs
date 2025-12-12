@@ -56,6 +56,97 @@ defmodule Resend.EmailsTest do
       end
     end
 
+    test "Sends an email with a template", context do
+      to = context.to
+      from = context.from
+      template_id = "order-confirmation"
+      variables = %{PRODUCT: "Vintage Macintosh", PRICE: 499}
+
+      opts = [
+        to: to,
+        from: from,
+        template: %{
+          id: template_id,
+          variables: variables
+        }
+      ]
+
+      Tesla.Mock.mock(fn request ->
+        assert request.method == :post
+        assert request.url == "https://api.resend.com/emails"
+
+        body = Jason.decode!(request.body)
+
+        # Assert template fields are present
+        assert body["template"]["id"] == template_id
+        assert body["template"]["variables"]["PRODUCT"] == "Vintage Macintosh"
+        assert body["template"]["variables"]["PRICE"] == 499
+
+        %Tesla.Env{status: 200, body: %{"id" => context.sent_email_id}}
+      end)
+
+      assert {:ok, %Resend.Emails.Email{}} = Resend.Emails.send(Map.new(opts))
+    end
+
+    test "Sends email with template via Swoosh adapter", context do
+      # Create Swoosh email with template in provider_options
+      email =
+        Swoosh.Email.new()
+        |> Swoosh.Email.to(context.to)
+        |> Swoosh.Email.from(context.from)
+        |> Swoosh.Email.put_provider_option(:template, %{
+          id: "welcome-email",
+          variables: %{
+            NAME: "John Doe",
+            COMPANY: "Acme Corp"
+          }
+        })
+
+      # Mock the API call and assert template is sent
+      Tesla.Mock.mock(fn request ->
+        assert request.method == :post
+        assert request.url == "https://api.resend.com/emails"
+
+        body = Jason.decode!(request.body)
+
+        # Assert template fields are present
+        assert body["template"]["id"] == "welcome-email"
+        assert body["template"]["variables"]["NAME"] == "John Doe"
+        assert body["template"]["variables"]["COMPANY"] == "Acme Corp"
+
+        %Tesla.Env{status: 200, body: %{"id" => context.sent_email_id}}
+      end)
+
+      # Deliver via Swoosh adapter
+      config = [api_key: context.api_key]
+      assert {:ok, _} = Resend.Swoosh.Adapter.deliver(email, config)
+    end
+
+    test "Sends email without template when not present in Swoosh email", context do
+      # Create regular Swoosh email without template
+      email =
+        Swoosh.Email.new()
+        |> Swoosh.Email.to(context.to)
+        |> Swoosh.Email.from(context.from)
+        |> Swoosh.Email.subject("Regular Email")
+        |> Swoosh.Email.text_body("This is a regular email")
+
+      # Mock the API call
+      Tesla.Mock.mock(fn request ->
+        body = Jason.decode!(request.body)
+
+        # Assert template field is not present
+        refute Map.has_key?(body, "template")
+        assert body["text"] == "This is a regular email"
+
+        %Tesla.Env{status: 200, body: %{"id" => context.sent_email_id}}
+      end)
+
+      # Deliver via Swoosh adapter
+      config = [api_key: context.api_key]
+      assert {:ok, _} = Resend.Swoosh.Adapter.deliver(email, config)
+    end
+
     test "Attachment struct accepts content_id field" do
       attachment = %Resend.Emails.Attachment{
         filename: "logo.jpg",

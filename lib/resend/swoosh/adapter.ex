@@ -28,13 +28,36 @@ defmodule Resend.Swoosh.Adapter do
   ```
 
   And just like that, you should be all set to send emails with Resend!
+
+  ## Using Templates
+
+  To use Resend templates with Swoosh, add the template information using `put_provider_option/3`:
+
+  ```ex
+  import Swoosh.Email
+
+  new()
+  |> from({"Acme", "[email protected]"})
+  |> to("[email protected]")
+  |> put_provider_option(:template, %{
+    id: "order-confirmation",
+    variables: %{
+      PRODUCT: "Vintage Macintosh",
+      PRICE: 499
+    }
+  })
+  |> MyApp.Mailer.deliver()
+  ```
+
+  When using templates, you don't need to set the `html_body` or `text_body` as the template
+  will provide the content.
   """
 
   @behaviour Swoosh.Adapter
 
   @impl true
   def deliver(%Swoosh.Email{} = email, config) do
-    Resend.Emails.send(Resend.client(config), %{
+    payload = %{
       subject: email.subject,
       from: format_sender(email.from),
       to: format_recipients(email.to),
@@ -45,7 +68,16 @@ defmodule Resend.Swoosh.Adapter do
       html: email.html_body,
       text: email.text_body,
       attachments: format_attachments(email.attachments)
-    })
+    }
+
+    payload =
+      if template = email.provider_options[:template] do
+        Map.put(payload, :template, template)
+      else
+        payload
+      end
+
+    Resend.Emails.send(Resend.client(config), payload)
   end
 
   @impl true
