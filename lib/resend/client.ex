@@ -12,6 +12,9 @@ defmodule Resend.Client do
 
   @type response(type) :: {:ok, type} | {:error, Resend.Error.t() | :client_error}
 
+  @typedoc "A module implementing the Castable behaviour, or a tuple for generic types"
+  @type castable :: module() | {module(), module()} | :raw
+
   @type t() :: %__MODULE__{
           api_key: String.t(),
           base_url: String.t() | nil,
@@ -35,8 +38,8 @@ defmodule Resend.Client do
     struct!(__MODULE__, Keyword.merge(@default_opts, config))
   end
 
-  @spec get(t(), Castable.impl(), String.t()) :: response(any())
-  @spec get(t(), Castable.impl(), String.t(), Keyword.t()) :: response(any())
+  @spec get(t(), castable(), String.t()) :: response(any())
+  @spec get(t(), castable(), String.t(), Keyword.t()) :: response(any())
   def get(client, castable_module, path, opts \\ []) do
     client_module = client.client || Resend.Client.TeslaClient
 
@@ -53,9 +56,9 @@ defmodule Resend.Client do
     |> handle_response(path, castable_module)
   end
 
-  @spec post(t(), Castable.impl(), String.t()) :: response(any())
-  @spec post(t(), Castable.impl(), String.t(), map() | list(map())) :: response(any())
-  @spec post(t(), Castable.impl(), String.t(), map() | list(map()), Keyword.t()) ::
+  @spec post(t(), castable(), String.t()) :: response(any())
+  @spec post(t(), castable(), String.t(), map() | list(map())) :: response(any())
+  @spec post(t(), castable(), String.t(), map() | list(map()), Keyword.t()) ::
           response(any())
   def post(client, castable_module, path, body \\ %{}, opts \\ []) do
     client_module = client.client || Resend.Client.TeslaClient
@@ -70,9 +73,9 @@ defmodule Resend.Client do
     |> handle_response(path, castable_module)
   end
 
-  @spec patch(t(), Castable.impl(), String.t()) :: response(any())
-  @spec patch(t(), Castable.impl(), String.t(), map()) :: response(any())
-  @spec patch(t(), Castable.impl(), String.t(), map(), Keyword.t()) :: response(any())
+  @spec patch(t(), castable(), String.t()) :: response(any())
+  @spec patch(t(), castable(), String.t(), map()) :: response(any())
+  @spec patch(t(), castable(), String.t(), map(), Keyword.t()) :: response(any())
   def patch(client, castable_module, path, body \\ %{}, opts \\ []) do
     client_module = client.client || Resend.Client.TeslaClient
 
@@ -86,9 +89,9 @@ defmodule Resend.Client do
     |> handle_response(path, castable_module)
   end
 
-  @spec delete(t(), Castable.impl(), String.t()) :: response(any())
-  @spec delete(t(), Castable.impl(), String.t(), map()) :: response(any())
-  @spec delete(t(), Castable.impl(), String.t(), map(), Keyword.t()) :: response(any())
+  @spec delete(t(), castable(), String.t()) :: response(any())
+  @spec delete(t(), castable(), String.t(), map()) :: response(any())
+  @spec delete(t(), castable(), String.t(), map(), Keyword.t()) :: response(any())
   def delete(client, castable_module, path, body \\ %{}, opts \\ []) do
     client_module = client.client || Resend.Client.TeslaClient
 
