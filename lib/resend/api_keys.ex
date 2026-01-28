@@ -39,8 +39,8 @@ defmodule Resend.ApiKeys do
   @doc """
   Removes an API key. Caution: This can't be undone!
   """
-  @spec remove(String.t()) :: Resend.Client.response(ApiKey.t())
-  @spec remove(Resend.Client.t(), String.t()) :: Resend.Client.response(ApiKey.t())
+  @spec remove(String.t()) :: Resend.Client.response(Resend.Empty.t())
+  @spec remove(Resend.Client.t(), String.t()) :: Resend.Client.response(Resend.Empty.t())
   def remove(client \\ Resend.client(), api_key_id) do
     Resend.Client.delete(client, Resend.Empty, "/api-keys/:id", %{},
       opts: [

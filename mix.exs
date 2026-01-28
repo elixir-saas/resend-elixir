@@ -55,6 +55,7 @@ defmodule Resend.MixProject do
       {:swoosh, "~> 1.3"},
       {:tesla, "~> 1.5"},
       {:hackney, "~> 1.9"},
+      {:jason, "~> 1.0"},
       {:dialyxir, "~> 1.2", only: :dev, runtime: false},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
@@ -76,14 +77,36 @@ defmodule Resend.MixProject do
     [
       "Core API": [
         Resend.ApiKeys,
+        Resend.Audiences,
+        Resend.Broadcasts,
+        Resend.Contacts,
+        Resend.ContactProperties,
         Resend.Domains,
-        Resend.Emails
+        Resend.Emails,
+        Resend.ReceivedEmails,
+        Resend.Segments,
+        Resend.Templates,
+        Resend.Topics,
+        Resend.Webhooks
       ],
       "Response Structs": [
         Resend.ApiKeys.ApiKey,
+        Resend.Audiences.Audience,
+        Resend.Broadcasts.Broadcast,
+        Resend.Contacts.Contact,
+        Resend.Contacts.TopicSubscription,
+        Resend.ContactProperties.ContactProperty,
         Resend.Domains.Domain,
         Resend.Domains.Domain.Record,
+        Resend.Emails.Attachment,
+        Resend.Emails.BatchResponse,
         Resend.Emails.Email,
+        Resend.Emails.Tag,
+        Resend.ReceivedEmails.ReceivedEmail,
+        Resend.Segments.Segment,
+        Resend.Templates.Template,
+        Resend.Topics.Topic,
+        Resend.Webhooks.Webhook,
         Resend.Empty,
         Resend.Error,
         Resend.List

@@ -9,6 +9,15 @@ API client for [Resend](https://resend.com/), the new email API for developers.
 * [`Resend.Emails`](https://hexdocs.pm/resend/Resend.Emails.html)
 * [`Resend.Domains`](https://hexdocs.pm/resend/Resend.Domains.html)
 * [`Resend.ApiKeys`](https://hexdocs.pm/resend/Resend.ApiKeys.html)
+* [`Resend.Audiences`](https://hexdocs.pm/resend/Resend.Audiences.html)
+* [`Resend.Broadcasts`](https://hexdocs.pm/resend/Resend.Broadcasts.html)
+* [`Resend.Contacts`](https://hexdocs.pm/resend/Resend.Contacts.html)
+* [`Resend.ContactProperties`](https://hexdocs.pm/resend/Resend.ContactProperties.html)
+* [`Resend.ReceivedEmails`](https://hexdocs.pm/resend/Resend.ReceivedEmails.html)
+* [`Resend.Segments`](https://hexdocs.pm/resend/Resend.Segments.html)
+* [`Resend.Templates`](https://hexdocs.pm/resend/Resend.Templates.html)
+* [`Resend.Topics`](https://hexdocs.pm/resend/Resend.Topics.html)
+* [`Resend.Webhooks`](https://hexdocs.pm/resend/Resend.Webhooks.html)
 
 ## Installation
 

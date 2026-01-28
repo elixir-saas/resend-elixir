@@ -1,12 +1,11 @@
-defmodule Resend.Emails.Email do
+defmodule Resend.ReceivedEmails.ReceivedEmail do
   @moduledoc """
-  Resend Email struct.
+  Resend Received Email struct.
   """
 
-  alias Resend.Emails.Attachment
-  alias Resend.Emails.Tag
   alias Resend.Util
   alias Resend.Castable
+  alias Resend.Emails.Attachment
 
   @behaviour Resend.Castable
 
@@ -14,17 +13,12 @@ defmodule Resend.Emails.Email do
           id: String.t(),
           from: String.t() | nil,
           to: list(String.t()) | nil,
-          bcc: list(String.t()) | nil,
           cc: list(String.t()) | nil,
-          reply_to: String.t() | nil,
+          bcc: list(String.t()) | nil,
           subject: String.t() | nil,
-          headers: map(),
           text: String.t() | nil,
           html: String.t() | nil,
           attachments: list(Attachment.t()) | nil,
-          tags: list(Tag.t()) | nil,
-          last_event: String.t() | nil,
-          scheduled_at: DateTime.t() | nil,
           created_at: DateTime.t() | nil
         }
 
@@ -33,17 +27,12 @@ defmodule Resend.Emails.Email do
     :id,
     :from,
     :to,
-    :bcc,
     :cc,
-    :reply_to,
+    :bcc,
     :subject,
-    :headers,
     :text,
     :html,
     :attachments,
-    :tags,
-    :last_event,
-    :scheduled_at,
     :created_at
   ]
 
@@ -53,21 +42,16 @@ defmodule Resend.Emails.Email do
       id: map["id"],
       from: map["from"],
       to: map["to"],
-      bcc: map["bcc"],
       cc: map["cc"],
-      reply_to: map["reply_to"],
+      bcc: map["bcc"],
       subject: map["subject"],
-      headers: map["headers"],
       text: map["text"],
       html: map["html"],
-      attachments: map["attachments"],
-      tags: cast_tags(map["tags"]),
-      last_event: map["last_event"],
-      scheduled_at: Util.parse_iso8601(map["scheduled_at"]),
+      attachments: cast_attachments(map["attachments"]),
       created_at: Util.parse_iso8601(map["created_at"])
     }
   end
 
-  defp cast_tags(nil), do: nil
-  defp cast_tags(tags), do: Castable.cast_list(Tag, tags)
+  defp cast_attachments(nil), do: nil
+  defp cast_attachments(attachments), do: Castable.cast_list(Attachment, attachments)
 end

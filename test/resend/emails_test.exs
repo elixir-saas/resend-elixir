@@ -13,17 +13,28 @@ defmodule Resend.EmailsTest do
       text = "Testing Resend"
       headers = %{"x-test-header" => "resend-elixir"}
 
-      opts = [
+      ClientMock.mock_request(context,
+        method: :post,
+        path: "/emails",
+        response: %{"id" => context.sent_email_id},
+        assert_body: fn body ->
+          assert body["to"] == to
+          assert body["from"] == from
+          assert body["subject"] == subject
+          assert body["text"] == text
+          assert body["headers"] == headers
+        end
+      )
+
+      opts = %{
         to: to,
         subject: subject,
         from: from,
         text: text,
         headers: headers
-      ]
+      }
 
-      ClientMock.mock_send_email(context, assert_fields: opts)
-
-      assert {:ok, %Resend.Emails.Email{}} = Resend.Emails.send(Map.new(opts))
+      assert {:ok, %Resend.Emails.Email{}} = Resend.Emails.send(opts)
     end
 
     test "Gets an email by ID", context do
@@ -31,7 +42,19 @@ defmodule Resend.EmailsTest do
       to = context.to
       from = context.from
 
-      ClientMock.mock_get_email(context)
+      ClientMock.mock_request(context,
+        method: :get,
+        path: "/emails/#{email_id}",
+        response: %{
+          "id" => email_id,
+          "from" => from,
+          "to" => [to],
+          "subject" => "Test Email",
+          "text" => "Testing Resend",
+          "last_event" => "delivered",
+          "created_at" => "2023-06-01T00:00:00.000Z"
+        }
+      )
 
       assert {:ok, %Resend.Emails.Email{id: ^email_id, to: [^to], from: ^from}} =
                Resend.Emails.get(email_id)
@@ -41,14 +64,15 @@ defmodule Resend.EmailsTest do
       test "Returns an error", context do
         email_id = context.sent_email_id
 
-        ClientMock.mock_get_email(context,
-          respond_with:
-            {401,
-             %{
-               "message" => "This API key is restricted to only send emails",
-               "name" => "restricted_api_key",
-               "statusCode" => 401
-             }}
+        ClientMock.mock_request(context,
+          method: :get,
+          path: "/emails/#{email_id}",
+          status: 401,
+          response: %{
+            "message" => "This API key is restricted to only send emails",
+            "name" => "restricted_api_key",
+            "statusCode" => 401
+          }
         )
 
         assert {:error, %Resend.Error{name: "restricted_api_key", status_code: 401}} =
@@ -146,6 +170,131 @@ defmodule Resend.EmailsTest do
       # Deliver via Swoosh adapter
       config = [api_key: context.api_key]
       assert {:ok, _} = Resend.Swoosh.Adapter.deliver(email, config)
+    end
+
+    test "list/1 lists all sent emails", context do
+      ClientMock.mock_request(context,
+        method: :get,
+        path: "/emails",
+        response: %{
+          "data" => [
+            %{
+              "id" => context.sent_email_id,
+              "from" => context.from,
+              "to" => [context.to],
+              "subject" => "Test Email"
+            },
+            %{
+              "id" => "email_987654321",
+              "from" => context.from,
+              "to" => ["other@example.com"],
+              "subject" => "Another Email"
+            }
+          ]
+        }
+      )
+
+      assert {:ok, %Resend.List{data: emails}} = Resend.Emails.list()
+      assert length(emails) == 2
+    end
+
+    test "send_batch/2 sends multiple emails", context do
+      Tesla.Mock.mock(fn request ->
+        assert request.method == :post
+        assert request.url == "https://api.resend.com/emails/batch"
+
+        body = Jason.decode!(request.body)
+        assert is_list(body)
+        assert length(body) == 2
+
+        %Tesla.Env{
+          status: 200,
+          body: %{
+            "data" => [
+              %{"id" => "email_1"},
+              %{"id" => "email_2"}
+            ]
+          }
+        }
+      end)
+
+      emails = [
+        %{to: "user1@example.com", from: context.from, subject: "Email 1", text: "Hello 1"},
+        %{to: "user2@example.com", from: context.from, subject: "Email 2", text: "Hello 2"}
+      ]
+
+      assert {:ok, %Resend.Emails.BatchResponse{data: [%{id: "email_1"}, %{id: "email_2"}]}} =
+               Resend.Emails.send_batch(emails)
+    end
+
+    test "update/3 updates a scheduled email", context do
+      scheduled_at = "2024-12-25T10:00:00.000Z"
+
+      ClientMock.mock_request(context,
+        method: :patch,
+        path: "/emails/#{context.sent_email_id}",
+        response: %{
+          "id" => context.sent_email_id,
+          "scheduled_at" => scheduled_at
+        },
+        assert_body: fn body ->
+          assert body["scheduled_at"] == scheduled_at
+        end
+      )
+
+      assert {:ok, %Resend.Emails.Email{id: id}} =
+               Resend.Emails.update(context.sent_email_id, scheduled_at: scheduled_at)
+
+      assert id == context.sent_email_id
+    end
+
+    test "cancel/2 cancels a scheduled email", context do
+      ClientMock.mock_request(context,
+        method: :post,
+        path: "/emails/#{context.sent_email_id}/cancel",
+        response: %{
+          "id" => context.sent_email_id,
+          "last_event" => "cancelled"
+        }
+      )
+
+      assert {:ok, %Resend.Emails.Email{last_event: "cancelled"}} =
+               Resend.Emails.cancel(context.sent_email_id)
+    end
+
+    test "list_attachments/2 lists attachments for an email", context do
+      ClientMock.mock_request(context,
+        method: :get,
+        path: "/emails/#{context.sent_email_id}/attachments",
+        response: %{
+          "data" => [
+            %{"filename" => "doc.pdf", "content_type" => "application/pdf"},
+            %{"filename" => "image.png", "content_type" => "image/png"}
+          ]
+        }
+      )
+
+      assert {:ok, %Resend.List{data: attachments}} =
+               Resend.Emails.list_attachments(context.sent_email_id)
+
+      assert length(attachments) == 2
+    end
+
+    test "get_attachment/3 gets a specific attachment", context do
+      attachment_id = "att_123456789"
+
+      ClientMock.mock_request(context,
+        method: :get,
+        path: "/emails/#{context.sent_email_id}/attachments/#{attachment_id}",
+        response: %{
+          "filename" => "document.pdf",
+          "content_type" => "application/pdf",
+          "content" => "base64content"
+        }
+      )
+
+      assert {:ok, %Resend.Emails.Attachment{filename: "document.pdf"}} =
+               Resend.Emails.get_attachment(context.sent_email_id, attachment_id)
     end
   end
 end

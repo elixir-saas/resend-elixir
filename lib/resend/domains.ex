@@ -11,7 +11,7 @@ defmodule Resend.Domains do
   Parameter options:
 
     * `:name` - The domain name (required)
-    * `:region` - Region to deliver emails from, on of: `["us-east-1", "eu-west-1", "sa-east-1"]`
+    * `:region` - Region to deliver emails from, one of: `["us-east-1", "eu-west-1", "sa-east-1"]`
 
   """
   @spec create(Keyword.t()) :: Resend.Client.response(Domain.t())
@@ -56,6 +56,30 @@ defmodule Resend.Domains do
   @spec list(Resend.Client.t()) :: Resend.Client.response(Resend.List.t(Domain.t()))
   def list(client \\ Resend.client()) do
     Resend.Client.get(client, Resend.List.of(Domain), "/domains")
+  end
+
+  @doc """
+  Updates a domain.
+
+  ## Options
+
+    * `:click_tracking` - Enable click tracking for this domain
+    * `:open_tracking` - Enable open tracking for this domain
+
+  """
+  @spec update(String.t(), Keyword.t()) :: Resend.Client.response(Domain.t())
+  @spec update(Resend.Client.t(), String.t(), Keyword.t()) :: Resend.Client.response(Domain.t())
+  def update(client \\ Resend.client(), domain_id, opts) do
+    Resend.Client.patch(
+      client,
+      Domain,
+      "/domains/:id",
+      %{
+        click_tracking: opts[:click_tracking],
+        open_tracking: opts[:open_tracking]
+      },
+      opts: [path_params: [id: domain_id]]
+    )
   end
 
   @doc """

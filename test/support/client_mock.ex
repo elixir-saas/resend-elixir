@@ -1,58 +1,43 @@
 defmodule Resend.ClientMock do
+  @moduledoc """
+  Test helpers for mocking Resend API calls using Tesla.Mock.
+  """
   use ExUnit.Case
 
-  def mock_send_email(context, opts \\ []) do
+  @base_url "https://api.resend.com"
+
+  @doc """
+  Generic mock for any API endpoint.
+
+  ## Options
+    * `:method` - HTTP method (default: :get)
+    * `:path` - Expected path (required)
+    * `:status` - Response status (default: 200)
+    * `:response` - Response body (required)
+    * `:assert_body` - Function to assert request body (optional)
+  """
+  def mock_request(context, opts) do
+    method = Keyword.get(opts, :method, :get)
+    path = Keyword.fetch!(opts, :path)
+    status = Keyword.get(opts, :status, 200)
+    response = Keyword.fetch!(opts, :response)
+    assert_body = Keyword.get(opts, :assert_body)
+
     Tesla.Mock.mock(fn request ->
       %{api_key: api_key} = context
 
-      assert request.method == :post
-      assert request.url == "https://api.resend.com/emails"
+      assert request.method == method
+      assert request.url == @base_url <> path
 
       assert Enum.find(request.headers, &(elem(&1, 0) == "Authorization")) ==
                {"Authorization", "Bearer #{api_key}"}
 
-      body = Jason.decode!(request.body)
-
-      for {field, value} <- Keyword.get(opts, :assert_fields, []) do
-        assert body[to_string(field)] == value
+      if assert_body && request.body do
+        body = Jason.decode!(request.body)
+        assert_body.(body)
       end
 
-      success_body = %{
-        "id" => context.sent_email_id
-      }
-
-      {status, body} = Keyword.get(opts, :respond_with, {200, success_body})
-      %Tesla.Env{status: status, body: body}
-    end)
-  end
-
-  def mock_get_email(context, opts \\ []) do
-    Tesla.Mock.mock(fn request ->
-      %{api_key: api_key} = context
-
-      assert request.method == :get
-      assert request.url == "https://api.resend.com/emails/#{context.sent_email_id}"
-
-      assert Enum.find(request.headers, &(elem(&1, 0) == "Authorization")) ==
-               {"Authorization", "Bearer #{api_key}"}
-
-      success_body = %{
-        "bcc" => nil,
-        "cc" => nil,
-        "created_at" => "2023-06-01T00:00:00.000Z",
-        "from" => context.from,
-        "html" => nil,
-        "id" => context.sent_email_id,
-        "last_event" => "delivered",
-        "object" => "email",
-        "reply_to" => nil,
-        "subject" => "Test Email",
-        "text" => "Testing Resend",
-        "to" => [context.to]
-      }
-
-      {status, body} = Keyword.get(opts, :respond_with, {200, success_body})
-      %Tesla.Env{status: status, body: body}
+      %Tesla.Env{status: status, body: response}
     end)
   end
 end
