@@ -16,7 +16,6 @@ defmodule Resend.Contacts do
   ## Options
 
     * `:email` - The contact's email address (required)
-    * `:audience_id` - The audience ID (required)
     * `:first_name` - The contact's first name
     * `:last_name` - The contact's last name
     * `:unsubscribed` - Whether the contact is unsubscribed
@@ -34,7 +33,6 @@ defmodule Resend.Contacts do
       "/contacts",
       %{
         email: opts[:email],
-        audience_id: opts[:audience_id],
         first_name: opts[:first_name],
         last_name: opts[:last_name],
         unsubscribed: opts[:unsubscribed],
@@ -50,7 +48,7 @@ defmodule Resend.Contacts do
 
   ## Options
 
-    * `:audience_id` - Filter contacts by audience ID
+    * `:segment_id` - Filter contacts by segment ID
 
   """
   @spec list() :: Resend.Client.response(Resend.List.t(Contact.t()))
@@ -64,7 +62,7 @@ defmodule Resend.Contacts do
   def list(%Resend.Client{} = client, opts) when is_list(opts), do: do_list(client, opts)
 
   defp do_list(client, opts) do
-    query = if opts[:audience_id], do: [audience_id: opts[:audience_id]], else: []
+    query = if opts[:segment_id], do: [segment_id: opts[:segment_id]], else: []
     Resend.Client.get(client, Resend.List.of(Contact), "/contacts", query: query)
   end
 

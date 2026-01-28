@@ -10,8 +10,7 @@ defmodule Resend.Topics do
 
   ## Options
 
-    * `:name` - The name of the topic (required)
-    * `:audience_id` - The audience ID (required)
+    * `:name` - The name of the topic (required, max 50 characters)
     * `:default_subscription` - Required. Values: `opt_in` or `opt_out`. Cannot be changed after creation.
     * `:description` - Description of the topic (max 200 characters)
     * `:visibility` - `public` or `private` (default: `private`)
@@ -26,7 +25,6 @@ defmodule Resend.Topics do
       "/topics",
       %{
         name: opts[:name],
-        audience_id: opts[:audience_id],
         default_subscription: opts[:default_subscription],
         description: opts[:description],
         visibility: opts[:visibility]
@@ -39,7 +37,9 @@ defmodule Resend.Topics do
 
   ## Options
 
-    * `:audience_id` - Filter topics by audience ID
+    * `:limit` - Maximum number of topics to return (1-100, default: 20)
+    * `:after` - Cursor for pagination (topic ID to start after)
+    * `:before` - Cursor for pagination (topic ID to start before)
 
   """
   @spec list() :: Resend.Client.response(Resend.List.t(Topic.t()))
@@ -53,7 +53,12 @@ defmodule Resend.Topics do
   def list(%Resend.Client{} = client, opts) when is_list(opts), do: do_list(client, opts)
 
   defp do_list(client, opts) do
-    query = if opts[:audience_id], do: [audience_id: opts[:audience_id]], else: []
+    query =
+      Enum.filter(
+        [limit: opts[:limit], after: opts[:after], before: opts[:before]],
+        fn {_k, v} -> v != nil end
+      )
+
     Resend.Client.get(client, Resend.List.of(Topic), "/topics", query: query)
   end
 

@@ -6,7 +6,6 @@ defmodule Resend.TopicsTest do
   setup :setup_env
 
   @topic_id "topic_123456789"
-  @audience_id "aud_123456789"
 
   describe "Topics" do
     test "create/2 creates a new topic", context do
@@ -16,12 +15,10 @@ defmodule Resend.TopicsTest do
         response: %{
           "id" => @topic_id,
           "name" => "Newsletter",
-          "audience_id" => @audience_id,
           "default_subscription" => "opt_in"
         },
         assert_body: fn body ->
           assert body["name"] == "Newsletter"
-          assert body["audience_id"] == @audience_id
           assert body["default_subscription"] == "opt_in"
         end
       )
@@ -33,7 +30,6 @@ defmodule Resend.TopicsTest do
                 default_subscription: "opt_in"
               }} =
                Resend.Topics.create(
-                 audience_id: @audience_id,
                  name: "Newsletter",
                  default_subscription: "opt_in"
                )
@@ -55,11 +51,11 @@ defmodule Resend.TopicsTest do
       assert length(topics) == 2
     end
 
-    test "list/2 lists topics filtered by audience_id", _context do
+    test "list/2 lists topics with pagination", _context do
       Req.Test.stub(Resend.ReqStub, fn conn ->
         assert conn.method == "GET"
         assert conn.request_path == "/topics"
-        assert conn.query_string == "audience_id=#{@audience_id}"
+        assert conn.query_string == "limit=10"
 
         conn
         |> Plug.Conn.put_resp_content_type("application/json")
@@ -74,7 +70,7 @@ defmodule Resend.TopicsTest do
       end)
 
       assert {:ok, %Resend.List{data: topics}} =
-               Resend.Topics.list(audience_id: @audience_id)
+               Resend.Topics.list(limit: 10)
 
       assert length(topics) == 1
     end
@@ -86,7 +82,6 @@ defmodule Resend.TopicsTest do
         response: %{
           "id" => @topic_id,
           "name" => "Newsletter",
-          "audience_id" => @audience_id,
           "default_subscription" => "opt_in",
           "created_at" => "2023-06-01T00:00:00.000Z"
         }

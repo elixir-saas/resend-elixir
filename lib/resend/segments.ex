@@ -11,7 +11,6 @@ defmodule Resend.Segments do
   ## Options
 
     * `:name` - The name of the segment (required)
-    * `:audience_id` - The audience ID (required)
 
   """
   @spec create(Keyword.t()) :: Resend.Client.response(Segment.t())
@@ -22,8 +21,7 @@ defmodule Resend.Segments do
       Segment,
       "/segments",
       %{
-        name: opts[:name],
-        audience_id: opts[:audience_id]
+        name: opts[:name]
       }
     )
   end
@@ -33,7 +31,9 @@ defmodule Resend.Segments do
 
   ## Options
 
-    * `:audience_id` - Filter segments by audience ID
+    * `:limit` - Maximum number of segments to return (1-100)
+    * `:after` - Cursor for pagination (segment ID to start after)
+    * `:before` - Cursor for pagination (segment ID to start before)
 
   """
   @spec list() :: Resend.Client.response(Resend.List.t(Segment.t()))
@@ -47,7 +47,12 @@ defmodule Resend.Segments do
   def list(%Resend.Client{} = client, opts) when is_list(opts), do: do_list(client, opts)
 
   defp do_list(client, opts) do
-    query = if opts[:audience_id], do: [audience_id: opts[:audience_id]], else: []
+    query =
+      Enum.filter(
+        [limit: opts[:limit], after: opts[:after], before: opts[:before]],
+        fn {_k, v} -> v != nil end
+      )
+
     Resend.Client.get(client, Resend.List.of(Segment), "/segments", query: query)
   end
 

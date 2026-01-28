@@ -6,7 +6,6 @@ defmodule Resend.ContactsTest do
   setup :setup_env
 
   @contact_id "ct_123456789"
-  @audience_id "aud_123456789"
   @segment_id "seg_123456789"
 
   describe "Contacts" do
@@ -23,13 +22,11 @@ defmodule Resend.ContactsTest do
         assert_body: fn body ->
           assert body["email"] == "john@example.com"
           assert body["first_name"] == "John"
-          assert body["audience_id"] == @audience_id
         end
       )
 
       assert {:ok, %Resend.Contacts.Contact{id: @contact_id, email: "john@example.com"}} =
                Resend.Contacts.create(
-                 audience_id: @audience_id,
                  email: "john@example.com",
                  first_name: "John",
                  last_name: "Doe"
@@ -52,11 +49,11 @@ defmodule Resend.ContactsTest do
       assert length(contacts) == 2
     end
 
-    test "list/2 lists contacts filtered by audience_id", _context do
+    test "list/2 lists contacts filtered by segment_id", _context do
       Req.Test.stub(Resend.ReqStub, fn conn ->
         assert conn.method == "GET"
         assert conn.request_path == "/contacts"
-        assert conn.query_string == "audience_id=#{@audience_id}"
+        assert conn.query_string == "segment_id=#{@segment_id}"
 
         conn
         |> Plug.Conn.put_resp_content_type("application/json")
@@ -71,7 +68,7 @@ defmodule Resend.ContactsTest do
       end)
 
       assert {:ok, %Resend.List{data: contacts}} =
-               Resend.Contacts.list(audience_id: @audience_id)
+               Resend.Contacts.list(segment_id: @segment_id)
 
       assert length(contacts) == 1
     end

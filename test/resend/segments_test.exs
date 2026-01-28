@@ -6,7 +6,6 @@ defmodule Resend.SegmentsTest do
   setup :setup_env
 
   @segment_id "seg_123456789"
-  @audience_id "aud_123456789"
 
   describe "Segments" do
     test "create/2 creates a new segment", context do
@@ -15,17 +14,15 @@ defmodule Resend.SegmentsTest do
         path: "/segments",
         response: %{
           "id" => @segment_id,
-          "name" => "VIP Customers",
-          "audience_id" => @audience_id
+          "name" => "VIP Customers"
         },
         assert_body: fn body ->
           assert body["name"] == "VIP Customers"
-          assert body["audience_id"] == @audience_id
         end
       )
 
       assert {:ok, %Resend.Segments.Segment{id: @segment_id, name: "VIP Customers"}} =
-               Resend.Segments.create(audience_id: @audience_id, name: "VIP Customers")
+               Resend.Segments.create(name: "VIP Customers")
     end
 
     test "list/1 lists all segments", context do
@@ -44,11 +41,11 @@ defmodule Resend.SegmentsTest do
       assert length(segments) == 2
     end
 
-    test "list/2 lists segments filtered by audience_id", _context do
+    test "list/2 lists segments with pagination", _context do
       Req.Test.stub(Resend.ReqStub, fn conn ->
         assert conn.method == "GET"
         assert conn.request_path == "/segments"
-        assert conn.query_string == "audience_id=#{@audience_id}"
+        assert conn.query_string == "limit=10"
 
         conn
         |> Plug.Conn.put_resp_content_type("application/json")
@@ -63,7 +60,7 @@ defmodule Resend.SegmentsTest do
       end)
 
       assert {:ok, %Resend.List{data: segments}} =
-               Resend.Segments.list(audience_id: @audience_id)
+               Resend.Segments.list(limit: 10)
 
       assert length(segments) == 1
     end
@@ -75,7 +72,6 @@ defmodule Resend.SegmentsTest do
         response: %{
           "id" => @segment_id,
           "name" => "VIP Customers",
-          "audience_id" => @audience_id,
           "created_at" => "2023-06-01T00:00:00.000Z"
         }
       )
