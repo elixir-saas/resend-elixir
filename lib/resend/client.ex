@@ -75,8 +75,8 @@ defmodule Resend.Client do
   end
 
   @spec patch(t(), castable(), String.t()) :: response(any())
-  @spec patch(t(), castable(), String.t(), map()) :: response(any())
-  @spec patch(t(), castable(), String.t(), map(), Keyword.t()) :: response(any())
+  @spec patch(t(), castable(), String.t(), map() | list(map())) :: response(any())
+  @spec patch(t(), castable(), String.t(), map() | list(map()), Keyword.t()) :: response(any())
   def patch(client, castable_module, path, body \\ %{}, opts \\ []) do
     client_module = client.client || Resend.Client.ReqClient
 
