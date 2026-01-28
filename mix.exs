@@ -1,7 +1,7 @@
 defmodule Resend.MixProject do
   use Mix.Project
 
-  @version "0.4.5"
+  @version "1.0.0-rc.0"
   @source_url "https://github.com/elixir-saas/resend-elixir"
 
   def project do
