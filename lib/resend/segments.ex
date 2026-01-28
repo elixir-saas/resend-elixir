@@ -4,6 +4,7 @@ defmodule Resend.Segments do
   """
 
   alias Resend.Segments.Segment
+  alias Resend.Util
 
   @doc """
   Creates a new segment.
@@ -16,14 +17,11 @@ defmodule Resend.Segments do
   @spec create(Keyword.t()) :: Resend.Client.response(Segment.t())
   @spec create(Resend.Client.t(), Keyword.t()) :: Resend.Client.response(Segment.t())
   def create(client \\ Resend.client(), opts) do
-    Resend.Client.post(
-      client,
-      Segment,
-      "/segments",
-      %{
-        name: opts[:name]
-      }
-    )
+    body =
+      %{name: opts[:name]}
+      |> Util.compact()
+
+    Resend.Client.post(client, Segment, "/segments", body)
   end
 
   @doc """

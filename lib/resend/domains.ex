@@ -4,6 +4,7 @@ defmodule Resend.Domains do
   """
 
   alias Resend.Domains.Domain
+  alias Resend.Util
 
   @doc """
   Creates a new domain.
@@ -17,10 +18,14 @@ defmodule Resend.Domains do
   @spec create(Keyword.t()) :: Resend.Client.response(Domain.t())
   @spec create(Resend.Client.t(), Keyword.t()) :: Resend.Client.response(Domain.t())
   def create(client \\ Resend.client(), opts) do
-    Resend.Client.post(client, Domain, "/domains", %{
-      name: opts[:name],
-      region: opts[:region]
-    })
+    body =
+      %{
+        name: opts[:name],
+        region: opts[:region]
+      }
+      |> Util.compact()
+
+    Resend.Client.post(client, Domain, "/domains", body)
   end
 
   @doc """
@@ -72,16 +77,20 @@ defmodule Resend.Domains do
   @spec update(String.t(), Keyword.t()) :: Resend.Client.response(Domain.t())
   @spec update(Resend.Client.t(), String.t(), Keyword.t()) :: Resend.Client.response(Domain.t())
   def update(client \\ Resend.client(), domain_id, opts) do
-    Resend.Client.patch(
-      client,
-      Domain,
-      "/domains/:id",
+    body =
       %{
         click_tracking: opts[:click_tracking],
         open_tracking: opts[:open_tracking],
         tls: opts[:tls],
         capabilities: opts[:capabilities]
-      },
+      }
+      |> Util.compact()
+
+    Resend.Client.patch(
+      client,
+      Domain,
+      "/domains/:id",
+      body,
       opts: [path_params: [id: domain_id]]
     )
   end

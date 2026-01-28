@@ -4,6 +4,7 @@ defmodule Resend.Topics do
   """
 
   alias Resend.Topics.Topic
+  alias Resend.Util
 
   @doc """
   Creates a new topic.
@@ -19,17 +20,16 @@ defmodule Resend.Topics do
   @spec create(Keyword.t()) :: Resend.Client.response(Topic.t())
   @spec create(Resend.Client.t(), Keyword.t()) :: Resend.Client.response(Topic.t())
   def create(client \\ Resend.client(), opts) do
-    Resend.Client.post(
-      client,
-      Topic,
-      "/topics",
+    body =
       %{
         name: opts[:name],
         default_subscription: opts[:default_subscription],
         description: opts[:description],
         visibility: opts[:visibility]
       }
-    )
+      |> Util.compact()
+
+    Resend.Client.post(client, Topic, "/topics", body)
   end
 
   @doc """
@@ -86,15 +86,19 @@ defmodule Resend.Topics do
   @spec update(Resend.Client.t(), String.t(), Keyword.t()) ::
           Resend.Client.response(Topic.t())
   def update(client \\ Resend.client(), topic_id, opts) do
-    Resend.Client.patch(
-      client,
-      Topic,
-      "/topics/:id",
+    body =
       %{
         name: opts[:name],
         description: opts[:description],
         visibility: opts[:visibility]
-      },
+      }
+      |> Util.compact()
+
+    Resend.Client.patch(
+      client,
+      Topic,
+      "/topics/:id",
+      body,
       opts: [path_params: [id: topic_id]]
     )
   end

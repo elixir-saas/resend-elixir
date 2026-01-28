@@ -4,6 +4,7 @@ defmodule Resend.ContactProperties do
   """
 
   alias Resend.ContactProperties.ContactProperty
+  alias Resend.Util
 
   @doc """
   Creates a new contact property.
@@ -18,11 +19,15 @@ defmodule Resend.ContactProperties do
   @spec create(Keyword.t()) :: Resend.Client.response(ContactProperty.t())
   @spec create(Resend.Client.t(), Keyword.t()) :: Resend.Client.response(ContactProperty.t())
   def create(client \\ Resend.client(), opts) do
-    Resend.Client.post(client, ContactProperty, "/contact-properties", %{
-      key: opts[:key],
-      type: opts[:type],
-      fallback_value: opts[:fallback_value]
-    })
+    body =
+      %{
+        key: opts[:key],
+        type: opts[:type],
+        fallback_value: opts[:fallback_value]
+      }
+      |> Util.compact()
+
+    Resend.Client.post(client, ContactProperty, "/contact-properties", body)
   end
 
   @doc """
@@ -57,13 +62,15 @@ defmodule Resend.ContactProperties do
   @spec update(Resend.Client.t(), String.t(), Keyword.t()) ::
           Resend.Client.response(ContactProperty.t())
   def update(client \\ Resend.client(), property_id, opts) do
+    body =
+      %{fallback_value: opts[:fallback_value]}
+      |> Util.compact()
+
     Resend.Client.patch(
       client,
       ContactProperty,
       "/contact-properties/:id",
-      %{
-        fallback_value: opts[:fallback_value]
-      },
+      body,
       opts: [path_params: [id: property_id]]
     )
   end

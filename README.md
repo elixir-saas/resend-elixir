@@ -87,13 +87,16 @@ View additional documentation at <https://hexdocs.pm/resend/Resend.Swoosh.Adapte
 
 ## Testing
 
-By default, calls to Resend are mocked in tests. To send live emails while running
-the test suite, set the following environment variables:
+Unit tests use mocks and don't require any configuration:
 
 ```sh
-RESEND_KEY="re_123456789" \
-  RECIPIENT_EMAIL="<to_email>" \
-  SENDER_EMAIL="<from_email>" \
-  SENT_EMAIL_ID="<existing_email_id>" \
-  mix test
+mix test
 ```
+
+To run integration tests against the live Resend API:
+
+```sh
+RESEND_KEY="re_123456789" mix test --include integration
+```
+
+**Note:** Integration tests create and delete real resources (API keys, contacts, segments, etc.) in your Resend account.

@@ -4,6 +4,7 @@ defmodule Resend.ApiKeys do
   """
 
   alias Resend.ApiKeys.ApiKey
+  alias Resend.Util
 
   @doc """
   Creates a new API key.
@@ -20,11 +21,15 @@ defmodule Resend.ApiKeys do
   @spec create(Keyword.t()) :: Resend.Client.response(ApiKey.t())
   @spec create(Resend.Client.t(), Keyword.t()) :: Resend.Client.response(ApiKey.t())
   def create(client \\ Resend.client(), opts) do
-    Resend.Client.post(client, ApiKey, "/api-keys", %{
-      name: opts[:name],
-      permission: opts[:permission],
-      domain_id: opts[:domain_id]
-    })
+    body =
+      %{
+        name: opts[:name],
+        permission: opts[:permission],
+        domain_id: opts[:domain_id]
+      }
+      |> Util.compact()
+
+    Resend.Client.post(client, ApiKey, "/api-keys", body)
   end
 
   @doc """

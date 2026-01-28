@@ -6,6 +6,7 @@ defmodule Resend.Emails do
   alias Resend.Emails.Email
   alias Resend.Emails.Attachment
   alias Resend.Emails.BatchResponse
+  alias Resend.Util
 
   @doc """
   Sends an email given a map of parameters.
@@ -33,22 +34,26 @@ defmodule Resend.Emails do
   @spec send(map()) :: Resend.Client.response(Email.t())
   @spec send(Resend.Client.t(), map()) :: Resend.Client.response(Email.t())
   def send(client \\ Resend.client(), opts) do
-    Resend.Client.post(client, Email, "/emails", %{
-      subject: opts[:subject],
-      to: opts[:to],
-      from: opts[:from],
-      cc: opts[:cc],
-      bcc: opts[:bcc],
-      reply_to: opts[:reply_to],
-      headers: opts[:headers],
-      html: opts[:html],
-      text: opts[:text],
-      attachments: opts[:attachments],
-      tags: opts[:tags],
-      scheduled_at: opts[:scheduled_at],
-      topic_id: opts[:topic_id],
-      template: opts[:template]
-    })
+    body =
+      %{
+        subject: opts[:subject],
+        to: opts[:to],
+        from: opts[:from],
+        cc: opts[:cc],
+        bcc: opts[:bcc],
+        reply_to: opts[:reply_to],
+        headers: opts[:headers],
+        html: opts[:html],
+        text: opts[:text],
+        attachments: opts[:attachments],
+        tags: opts[:tags],
+        scheduled_at: opts[:scheduled_at],
+        topic_id: opts[:topic_id],
+        template: opts[:template]
+      }
+      |> Util.compact()
+
+    Resend.Client.post(client, Email, "/emails", body)
   end
 
   @doc """
@@ -77,6 +82,7 @@ defmodule Resend.Emails do
           topic_id: opts[:topic_id],
           template: opts[:template]
         }
+        |> Util.compact()
       end)
 
     Resend.Client.post(client, BatchResponse, "/emails/batch", batch)
@@ -116,13 +122,15 @@ defmodule Resend.Emails do
   @spec update(String.t(), Keyword.t()) :: Resend.Client.response(Email.t())
   @spec update(Resend.Client.t(), String.t(), Keyword.t()) :: Resend.Client.response(Email.t())
   def update(client \\ Resend.client(), email_id, opts) do
+    body =
+      %{scheduled_at: opts[:scheduled_at]}
+      |> Util.compact()
+
     Resend.Client.patch(
       client,
       Email,
       "/emails/:id",
-      %{
-        scheduled_at: opts[:scheduled_at]
-      },
+      body,
       opts: [path_params: [id: email_id]]
     )
   end

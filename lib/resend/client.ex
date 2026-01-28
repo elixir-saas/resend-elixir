@@ -18,11 +18,12 @@ defmodule Resend.Client do
   @type t() :: %__MODULE__{
           api_key: String.t(),
           base_url: String.t() | nil,
-          client: module() | nil
+          client: module() | nil,
+          req_options: Keyword.t() | nil
         }
 
   @enforce_keys [:api_key, :base_url, :client]
-  defstruct [:api_key, :base_url, :client]
+  defstruct [:api_key, :base_url, :client, :req_options]
 
   @default_opts [
     base_url: "https://api.resend.com",
@@ -34,7 +35,7 @@ defmodule Resend.Client do
   """
   @spec new(Resend.config()) :: t()
   def new(config) do
-    config = Keyword.take(config, [:api_key, :base_url, :client])
+    config = Keyword.take(config, [:api_key, :base_url, :client, :req_options])
     struct!(__MODULE__, Keyword.merge(@default_opts, config))
   end
 

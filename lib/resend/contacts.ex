@@ -9,6 +9,7 @@ defmodule Resend.Contacts do
   alias Resend.Contacts.Contact
   alias Resend.Contacts.TopicSubscription
   alias Resend.Segments.Segment
+  alias Resend.Util
 
   @doc """
   Creates a new contact.
@@ -27,10 +28,7 @@ defmodule Resend.Contacts do
   @spec create(Keyword.t()) :: Resend.Client.response(Contact.t())
   @spec create(Resend.Client.t(), Keyword.t()) :: Resend.Client.response(Contact.t())
   def create(client \\ Resend.client(), opts) do
-    Resend.Client.post(
-      client,
-      Contact,
-      "/contacts",
+    body =
       %{
         email: opts[:email],
         first_name: opts[:first_name],
@@ -40,7 +38,9 @@ defmodule Resend.Contacts do
         segments: opts[:segments],
         topics: opts[:topics]
       }
-    )
+      |> Util.compact()
+
+    Resend.Client.post(client, Contact, "/contacts", body)
   end
 
   @doc """
@@ -92,16 +92,20 @@ defmodule Resend.Contacts do
   @spec update(Resend.Client.t(), String.t(), Keyword.t()) ::
           Resend.Client.response(Contact.t())
   def update(client \\ Resend.client(), contact_id, opts) do
-    Resend.Client.patch(
-      client,
-      Contact,
-      "/contacts/:id",
+    body =
       %{
         first_name: opts[:first_name],
         last_name: opts[:last_name],
         unsubscribed: opts[:unsubscribed],
         properties: opts[:properties]
-      },
+      }
+      |> Util.compact()
+
+    Resend.Client.patch(
+      client,
+      Contact,
+      "/contacts/:id",
+      body,
       opts: [path_params: [id: contact_id]]
     )
   end
@@ -187,23 +191,26 @@ defmodule Resend.Contacts do
   @doc """
   Updates topic subscriptions for a contact.
 
-  ## Options
+  Takes a list of maps with `:id` (topic ID) and `:subscription` (`"opt_in"` or `"opt_out"`).
 
-    * `:topics` - A list of maps with `:topic_id` and `:subscribed` keys
+  ## Example
+
+      Resend.Contacts.update_topics(contact_id, [
+        %{id: "topic_123", subscription: "opt_in"},
+        %{id: "topic_456", subscription: "opt_out"}
+      ])
 
   """
-  @spec update_topics(String.t(), Keyword.t()) ::
+  @spec update_topics(String.t(), list(map())) ::
           Resend.Client.response(Resend.List.t(TopicSubscription.t()))
-  @spec update_topics(Resend.Client.t(), String.t(), Keyword.t()) ::
+  @spec update_topics(Resend.Client.t(), String.t(), list(map())) ::
           Resend.Client.response(Resend.List.t(TopicSubscription.t()))
-  def update_topics(client \\ Resend.client(), contact_id, opts) do
+  def update_topics(client \\ Resend.client(), contact_id, topics) when is_list(topics) do
     Resend.Client.patch(
       client,
       Resend.List.of(TopicSubscription),
       "/contacts/:contact_id/topics",
-      %{
-        topics: opts[:topics]
-      },
+      topics,
       opts: [path_params: [contact_id: contact_id]]
     )
   end

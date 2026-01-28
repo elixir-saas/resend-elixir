@@ -24,11 +24,17 @@ defmodule Resend.Client.ReqClient do
       headers: [{"authorization", "Bearer #{client.api_key}"}]
     ]
 
-    # Support Req.Test plug for testing
+    # Support Req.Test plug for testing (client.req_options overrides config)
     request_opts =
-      case Application.get_env(:resend, :req_options) do
-        nil -> request_opts
-        req_opts -> Keyword.merge(request_opts, req_opts)
+      case client.req_options do
+        nil ->
+          case Application.get_env(:resend, :req_options) do
+            nil -> request_opts
+            req_opts -> Keyword.merge(request_opts, req_opts)
+          end
+
+        req_opts ->
+          Keyword.merge(request_opts, req_opts)
       end
 
     request_opts =

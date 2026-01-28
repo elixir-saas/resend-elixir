@@ -4,6 +4,7 @@ defmodule Resend.Webhooks do
   """
 
   alias Resend.Webhooks.Webhook
+  alias Resend.Util
 
   @doc """
   Creates a new webhook.
@@ -18,11 +19,15 @@ defmodule Resend.Webhooks do
   @spec create(Keyword.t()) :: Resend.Client.response(Webhook.t())
   @spec create(Resend.Client.t(), Keyword.t()) :: Resend.Client.response(Webhook.t())
   def create(client \\ Resend.client(), opts) do
-    Resend.Client.post(client, Webhook, "/webhooks", %{
-      endpoint: opts[:endpoint],
-      events: opts[:events],
-      name: opts[:name]
-    })
+    body =
+      %{
+        endpoint: opts[:endpoint],
+        events: opts[:events],
+        name: opts[:name]
+      }
+      |> Util.compact()
+
+    Resend.Client.post(client, Webhook, "/webhooks", body)
   end
 
   @doc """
@@ -56,15 +61,19 @@ defmodule Resend.Webhooks do
   @spec update(String.t(), Keyword.t()) :: Resend.Client.response(Webhook.t())
   @spec update(Resend.Client.t(), String.t(), Keyword.t()) :: Resend.Client.response(Webhook.t())
   def update(client \\ Resend.client(), webhook_id, opts) do
-    Resend.Client.patch(
-      client,
-      Webhook,
-      "/webhooks/:id",
+    body =
       %{
         endpoint: opts[:endpoint],
         events: opts[:events],
         name: opts[:name]
-      },
+      }
+      |> Util.compact()
+
+    Resend.Client.patch(
+      client,
+      Webhook,
+      "/webhooks/:id",
+      body,
       opts: [path_params: [id: webhook_id]]
     )
   end

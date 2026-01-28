@@ -4,6 +4,7 @@ defmodule Resend.Broadcasts do
   """
 
   alias Resend.Broadcasts.Broadcast
+  alias Resend.Util
 
   @doc """
   Creates a new broadcast.
@@ -24,17 +25,21 @@ defmodule Resend.Broadcasts do
   @spec create(Keyword.t()) :: Resend.Client.response(Broadcast.t())
   @spec create(Resend.Client.t(), Keyword.t()) :: Resend.Client.response(Broadcast.t())
   def create(client \\ Resend.client(), opts) do
-    Resend.Client.post(client, Broadcast, "/broadcasts", %{
-      name: opts[:name],
-      segment_id: opts[:segment_id],
-      from: opts[:from],
-      subject: opts[:subject],
-      reply_to: opts[:reply_to],
-      html: opts[:html],
-      text: opts[:text],
-      preview_text: opts[:preview_text],
-      topic_id: opts[:topic_id]
-    })
+    body =
+      %{
+        name: opts[:name],
+        segment_id: opts[:segment_id],
+        from: opts[:from],
+        subject: opts[:subject],
+        reply_to: opts[:reply_to],
+        html: opts[:html],
+        text: opts[:text],
+        preview_text: opts[:preview_text],
+        topic_id: opts[:topic_id]
+      }
+      |> Util.compact()
+
+    Resend.Client.post(client, Broadcast, "/broadcasts", body)
   end
 
   @doc """
@@ -77,10 +82,7 @@ defmodule Resend.Broadcasts do
   @spec update(Resend.Client.t(), String.t(), Keyword.t()) ::
           Resend.Client.response(Broadcast.t())
   def update(client \\ Resend.client(), broadcast_id, opts) do
-    Resend.Client.patch(
-      client,
-      Broadcast,
-      "/broadcasts/:id",
+    body =
       %{
         name: opts[:name],
         segment_id: opts[:segment_id],
@@ -91,7 +93,14 @@ defmodule Resend.Broadcasts do
         text: opts[:text],
         preview_text: opts[:preview_text],
         topic_id: opts[:topic_id]
-      },
+      }
+      |> Util.compact()
+
+    Resend.Client.patch(
+      client,
+      Broadcast,
+      "/broadcasts/:id",
+      body,
       opts: [path_params: [id: broadcast_id]]
     )
   end
@@ -120,13 +129,15 @@ defmodule Resend.Broadcasts do
   @spec send(Resend.Client.t(), String.t()) :: Resend.Client.response(Broadcast.t())
   @spec send(Resend.Client.t(), String.t(), Keyword.t()) :: Resend.Client.response(Broadcast.t())
   def send(client \\ Resend.client(), broadcast_id, opts \\ []) do
+    body =
+      %{scheduled_at: opts[:scheduled_at]}
+      |> Util.compact()
+
     Resend.Client.post(
       client,
       Broadcast,
       "/broadcasts/:id/send",
-      %{
-        scheduled_at: opts[:scheduled_at]
-      },
+      body,
       opts: [path_params: [id: broadcast_id]]
     )
   end

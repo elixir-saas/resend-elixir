@@ -13,4 +13,14 @@ defmodule Resend.Util do
     {:ok, date_time, 0} = DateTime.from_iso8601(date_string)
     date_time
   end
+
+  @doc """
+  Removes nil values from a map. Used to avoid sending null values to the API.
+  """
+  @spec compact(map()) :: map()
+  def compact(map) when is_map(map) do
+    map
+    |> Enum.reject(fn {_k, v} -> is_nil(v) end)
+    |> Map.new()
+  end
 end

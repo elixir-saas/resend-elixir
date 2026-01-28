@@ -12,6 +12,7 @@ defmodule Resend.Webhooks.Webhook do
           name: String.t() | nil,
           endpoint: String.t() | nil,
           events: list(String.t()) | nil,
+          status: String.t() | nil,
           signing_secret: String.t() | nil,
           created_at: DateTime.t() | nil,
           updated_at: DateTime.t() | nil
@@ -23,6 +24,7 @@ defmodule Resend.Webhooks.Webhook do
     :name,
     :endpoint,
     :events,
+    :status,
     :signing_secret,
     :created_at,
     :updated_at
@@ -35,6 +37,7 @@ defmodule Resend.Webhooks.Webhook do
       name: map["name"],
       endpoint: map["endpoint"],
       events: map["events"],
+      status: map["status"],
       signing_secret: map["signing_secret"],
       created_at: Util.parse_iso8601(map["created_at"]),
       updated_at: Util.parse_iso8601(map["updated_at"])

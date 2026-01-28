@@ -193,7 +193,7 @@ defmodule Resend.ContactsTest do
     end
 
     test "update_topics/3 updates topic subscriptions", context do
-      topics = [%{topic_id: "topic_123", subscribed: false}]
+      topics = [%{id: "topic_123", subscription: "opt_out"}]
 
       ClientMock.mock_request(context,
         method: :patch,
@@ -204,13 +204,12 @@ defmodule Resend.ContactsTest do
           ]
         },
         assert_body: fn body ->
-          # JSON decoding converts atom keys to string keys
-          assert body["topics"] == [%{"topic_id" => "topic_123", "subscribed" => false}]
+          assert body == [%{"id" => "topic_123", "subscription" => "opt_out"}]
         end
       )
 
       assert {:ok, %Resend.List{}} =
-               Resend.Contacts.update_topics(@contact_id, topics: topics)
+               Resend.Contacts.update_topics(@contact_id, topics)
     end
   end
 end
