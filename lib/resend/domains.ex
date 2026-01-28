@@ -65,6 +65,8 @@ defmodule Resend.Domains do
 
     * `:click_tracking` - Enable click tracking for this domain
     * `:open_tracking` - Enable open tracking for this domain
+    * `:tls` - TLS setting: `"opportunistic"` (default) or `"enforced"`
+    * `:capabilities` - Map with `:sending` and/or `:receiving` set to `"enabled"` or `"disabled"`
 
   """
   @spec update(String.t(), Keyword.t()) :: Resend.Client.response(Domain.t())
@@ -76,7 +78,9 @@ defmodule Resend.Domains do
       "/domains/:id",
       %{
         click_tracking: opts[:click_tracking],
-        open_tracking: opts[:open_tracking]
+        open_tracking: opts[:open_tracking],
+        tls: opts[:tls],
+        capabilities: opts[:capabilities]
       },
       opts: [path_params: [id: domain_id]]
     )

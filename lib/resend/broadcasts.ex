@@ -10,10 +10,10 @@ defmodule Resend.Broadcasts do
 
   ## Options
 
-    * `:name` - The name of the broadcast (required)
     * `:segment_id` - The segment ID to send to (required)
     * `:from` - The sender email address (required)
     * `:subject` - The email subject (required)
+    * `:name` - Internal friendly name for the broadcast
     * `:reply_to` - Reply-to email addresses
     * `:html` - The HTML content
     * `:text` - The plain text content
