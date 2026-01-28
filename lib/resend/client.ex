@@ -26,7 +26,7 @@ defmodule Resend.Client do
 
   @default_opts [
     base_url: "https://api.resend.com",
-    client: __MODULE__.TeslaClient
+    client: __MODULE__.ReqClient
   ]
 
   @doc """
@@ -41,7 +41,7 @@ defmodule Resend.Client do
   @spec get(t(), castable(), String.t()) :: response(any())
   @spec get(t(), castable(), String.t(), Keyword.t()) :: response(any())
   def get(client, castable_module, path, opts \\ []) do
-    client_module = client.client || Resend.Client.TeslaClient
+    client_module = client.client || Resend.Client.ReqClient
 
     # Extract query params if provided
     {query_params, opts} = Keyword.pop(opts, :query, [])
@@ -61,7 +61,7 @@ defmodule Resend.Client do
   @spec post(t(), castable(), String.t(), map() | list(map()), Keyword.t()) ::
           response(any())
   def post(client, castable_module, path, body \\ %{}, opts \\ []) do
-    client_module = client.client || Resend.Client.TeslaClient
+    client_module = client.client || Resend.Client.ReqClient
 
     opts =
       opts
@@ -77,7 +77,7 @@ defmodule Resend.Client do
   @spec patch(t(), castable(), String.t(), map()) :: response(any())
   @spec patch(t(), castable(), String.t(), map(), Keyword.t()) :: response(any())
   def patch(client, castable_module, path, body \\ %{}, opts \\ []) do
-    client_module = client.client || Resend.Client.TeslaClient
+    client_module = client.client || Resend.Client.ReqClient
 
     opts =
       opts
@@ -93,7 +93,7 @@ defmodule Resend.Client do
   @spec delete(t(), castable(), String.t(), map()) :: response(any())
   @spec delete(t(), castable(), String.t(), map(), Keyword.t()) :: response(any())
   def delete(client, castable_module, path, body \\ %{}, opts \\ []) do
-    client_module = client.client || Resend.Client.TeslaClient
+    client_module = client.client || Resend.Client.ReqClient
 
     opts =
       opts

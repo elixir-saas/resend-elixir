@@ -45,19 +45,21 @@ defmodule Resend.SegmentsTest do
     end
 
     test "list/2 lists segments filtered by audience_id", _context do
-      Tesla.Mock.mock(fn request ->
-        assert request.method == :get
-        assert request.url == "https://api.resend.com/segments"
-        assert request.query == [audience_id: @audience_id]
+      Req.Test.stub(Resend.ReqStub, fn conn ->
+        assert conn.method == "GET"
+        assert conn.request_path == "/segments"
+        assert conn.query_string == "audience_id=#{@audience_id}"
 
-        %Tesla.Env{
-          status: 200,
-          body: %{
+        conn
+        |> Plug.Conn.put_resp_content_type("application/json")
+        |> Plug.Conn.send_resp(
+          200,
+          Jason.encode!(%{
             "data" => [
               %{"id" => @segment_id, "name" => "VIP Customers"}
             ]
-          }
-        }
+          })
+        )
       end)
 
       assert {:ok, %Resend.List{data: segments}} =

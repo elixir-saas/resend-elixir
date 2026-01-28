@@ -1,6 +1,8 @@
 defmodule Resend.EmailsTest do
   use Resend.TestCase
 
+  import ExUnit.CaptureLog
+
   alias Resend.ClientMock
 
   setup :setup_env
@@ -75,8 +77,10 @@ defmodule Resend.EmailsTest do
           }
         )
 
-        assert {:error, %Resend.Error{name: "restricted_api_key", status_code: 401}} =
-                 Resend.Emails.get(email_id)
+        capture_log(fn ->
+          assert {:error, %Resend.Error{name: "restricted_api_key", status_code: 401}} =
+                   Resend.Emails.get(email_id)
+        end)
       end
     end
 
@@ -152,11 +156,12 @@ defmodule Resend.EmailsTest do
         )
 
       # Mock the API call and assert content_id is sent
-      Tesla.Mock.mock(fn request ->
-        assert request.method == :post
-        assert request.url == "https://api.resend.com/emails"
+      Req.Test.stub(Resend.ReqStub, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/emails"
 
-        body = Jason.decode!(request.body)
+        {:ok, body, conn} = Plug.Conn.read_body(conn)
+        body = Jason.decode!(body)
 
         # Assert attachment has content_id from Swoosh cid
         assert [attachment] = body["attachments"]
@@ -164,7 +169,9 @@ defmodule Resend.EmailsTest do
         assert attachment["filename"] == "logo.jpg"
         assert attachment["content_type"] == "image/jpeg"
 
-        %Tesla.Env{status: 200, body: %{"id" => context.sent_email_id}}
+        conn
+        |> Plug.Conn.put_resp_content_type("application/json")
+        |> Plug.Conn.send_resp(200, Jason.encode!(%{"id" => context.sent_email_id}))
       end)
 
       # Deliver via Swoosh adapter
@@ -199,23 +206,26 @@ defmodule Resend.EmailsTest do
     end
 
     test "send_batch/2 sends multiple emails", context do
-      Tesla.Mock.mock(fn request ->
-        assert request.method == :post
-        assert request.url == "https://api.resend.com/emails/batch"
+      Req.Test.stub(Resend.ReqStub, fn conn ->
+        assert conn.method == "POST"
+        assert conn.request_path == "/emails/batch"
 
-        body = Jason.decode!(request.body)
+        {:ok, body, conn} = Plug.Conn.read_body(conn)
+        body = Jason.decode!(body)
         assert is_list(body)
         assert length(body) == 2
 
-        %Tesla.Env{
-          status: 200,
-          body: %{
+        conn
+        |> Plug.Conn.put_resp_content_type("application/json")
+        |> Plug.Conn.send_resp(
+          200,
+          Jason.encode!(%{
             "data" => [
               %{"id" => "email_1"},
               %{"id" => "email_2"}
             ]
-          }
-        }
+          })
+        )
       end)
 
       emails = [

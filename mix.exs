@@ -53,9 +53,9 @@ defmodule Resend.MixProject do
   defp deps do
     [
       {:swoosh, "~> 1.3"},
-      {:tesla, "~> 1.5"},
-      {:hackney, "~> 1.9"},
+      {:req, "~> 0.5"},
       {:jason, "~> 1.0"},
+      {:plug, "~> 1.0", only: :test},
       {:dialyxir, "~> 1.2", only: :dev, runtime: false},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
@@ -116,7 +116,7 @@ defmodule Resend.MixProject do
       ],
       "API Client": [
         Resend.Client,
-        Resend.Client.TeslaClient
+        Resend.Client.ReqClient
       ],
       Utilities: [
         Resend.Util

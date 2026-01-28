@@ -33,12 +33,12 @@ defmodule Resend do
   config :resend, Resend.Client
     api_key: "re_1234567",
     base_url: "https://api.resend.com",
-    client: Resend.Client.TeslaClient
+    client: Resend.Client.ReqClient
   ```
 
   The only required config option is `:api_key`. If you would like to replace the
   HTTP client used by Resend, configure the `:client` option. By default, this library
-  uses [Tesla](https://github.com/elixir-tesla/tesla), but changing it is as easy as
+  uses [Req](https://github.com/wojtekmach/req), but changing it is as easy as
   defining your own client module. See the `Resend.Client` module docs for more info.
   """
   @spec config() :: config()

@@ -1,10 +1,8 @@
 defmodule Resend.ClientMock do
   @moduledoc """
-  Test helpers for mocking Resend API calls using Tesla.Mock.
+  Test helpers for mocking Resend API calls using Req.Test.
   """
   use ExUnit.Case
-
-  @base_url "https://api.resend.com"
 
   @doc """
   Generic mock for any API endpoint.
@@ -23,21 +21,33 @@ defmodule Resend.ClientMock do
     response = Keyword.fetch!(opts, :response)
     assert_body = Keyword.get(opts, :assert_body)
 
-    Tesla.Mock.mock(fn request ->
+    Req.Test.stub(Resend.ReqStub, fn conn ->
       %{api_key: api_key} = context
 
-      assert request.method == method
-      assert request.url == @base_url <> path
+      assert conn.method == method_to_string(method)
+      assert conn.request_path == path
 
-      assert Enum.find(request.headers, &(elem(&1, 0) == "Authorization")) ==
-               {"Authorization", "Bearer #{api_key}"}
+      auth_header = Plug.Conn.get_req_header(conn, "authorization")
+      assert auth_header == ["Bearer #{api_key}"]
 
-      if assert_body && request.body do
-        body = Jason.decode!(request.body)
-        assert_body.(body)
+      if assert_body do
+        {:ok, body, _conn} = Plug.Conn.read_body(conn)
+
+        if body != "" do
+          body = Jason.decode!(body)
+          assert_body.(body)
+        end
       end
 
-      %Tesla.Env{status: status, body: response}
+      conn
+      |> Plug.Conn.put_resp_content_type("application/json")
+      |> Plug.Conn.send_resp(status, Jason.encode!(response))
     end)
   end
+
+  defp method_to_string(:get), do: "GET"
+  defp method_to_string(:post), do: "POST"
+  defp method_to_string(:put), do: "PUT"
+  defp method_to_string(:patch), do: "PATCH"
+  defp method_to_string(:delete), do: "DELETE"
 end

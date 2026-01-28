@@ -53,19 +53,21 @@ defmodule Resend.ContactsTest do
     end
 
     test "list/2 lists contacts filtered by audience_id", _context do
-      Tesla.Mock.mock(fn request ->
-        assert request.method == :get
-        assert request.url == "https://api.resend.com/contacts"
-        assert request.query == [audience_id: @audience_id]
+      Req.Test.stub(Resend.ReqStub, fn conn ->
+        assert conn.method == "GET"
+        assert conn.request_path == "/contacts"
+        assert conn.query_string == "audience_id=#{@audience_id}"
 
-        %Tesla.Env{
-          status: 200,
-          body: %{
+        conn
+        |> Plug.Conn.put_resp_content_type("application/json")
+        |> Plug.Conn.send_resp(
+          200,
+          Jason.encode!(%{
             "data" => [
               %{"id" => @contact_id, "email" => "john@example.com"}
             ]
-          }
-        }
+          })
+        )
       end)
 
       assert {:ok, %Resend.List{data: contacts}} =
