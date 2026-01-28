@@ -21,8 +21,15 @@ defmodule Resend.Contacts do
     * `:last_name` - The contact's last name
     * `:unsubscribed` - Whether the contact is unsubscribed
     * `:properties` - Object of custom property key-value pairs
-    * `:segments` - Array of segment IDs to add contact to
+    * `:segments` - Array of segment IDs (strings) to add contact to
     * `:topics` - Array of topic subscriptions with `:id` and `:subscription` (`opt_in`/`opt_out`)
+
+  ## Example
+
+      Resend.Contacts.create(
+        email: "user@example.com",
+        segments: ["seg_123", "seg_456"]
+      )
 
   """
   @spec create(Keyword.t()) :: Resend.Client.response(Contact.t())
@@ -35,12 +42,21 @@ defmodule Resend.Contacts do
         last_name: opts[:last_name],
         unsubscribed: opts[:unsubscribed],
         properties: opts[:properties],
-        segments: opts[:segments],
+        segments: normalize_segments(opts[:segments]),
         topics: opts[:topics]
       }
       |> Util.compact()
 
     Resend.Client.post(client, Contact, "/contacts", body)
+  end
+
+  defp normalize_segments(nil), do: nil
+
+  defp normalize_segments(segments) when is_list(segments) do
+    Enum.map(segments, fn
+      %{id: _} = segment -> segment
+      id when is_binary(id) -> %{id: id}
+    end)
   end
 
   @doc """

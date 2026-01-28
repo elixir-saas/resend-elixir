@@ -33,6 +33,41 @@ defmodule Resend.ContactsTest do
                )
     end
 
+    test "create/2 normalizes segments to objects", context do
+      ClientMock.mock_request(context,
+        method: :post,
+        path: "/contacts",
+        response: %{"id" => @contact_id},
+        assert_body: fn body ->
+          # Segments should be normalized to objects with "id" key
+          assert body["segments"] == [%{"id" => @segment_id}, %{"id" => "seg_other"}]
+        end
+      )
+
+      assert {:ok, _} =
+               Resend.Contacts.create(
+                 email: "john@example.com",
+                 segments: [@segment_id, "seg_other"]
+               )
+    end
+
+    test "create/2 accepts segment objects directly", context do
+      ClientMock.mock_request(context,
+        method: :post,
+        path: "/contacts",
+        response: %{"id" => @contact_id},
+        assert_body: fn body ->
+          assert body["segments"] == [%{"id" => @segment_id}]
+        end
+      )
+
+      assert {:ok, _} =
+               Resend.Contacts.create(
+                 email: "john@example.com",
+                 segments: [%{id: @segment_id}]
+               )
+    end
+
     test "list/1 lists all contacts", context do
       ClientMock.mock_request(context,
         method: :get,
